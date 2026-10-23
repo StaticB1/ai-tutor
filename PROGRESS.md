@@ -2,7 +2,7 @@
 
 ## Status
 **Overall:** in-progress
-**Last Updated:** 2026-10-23 16:00
+**Last Updated:** 2026-10-23 18:00
 
 ---
 
@@ -12,6 +12,7 @@
 ---
 
 ## Recently Completed
+- 2026-10-23: Learner UI overhaul: dashboard (continue, stats, streak), search and filters, question status, maths keypad, quick replies, read aloud, points pop-up, resume after refresh, finish screen with next question, printable teacher report, My progress and How it works pages, dark mode and large text. Checked at 1366 px and 390 px in light and dark; no page errors, no sideways scroll.
 - 2026-10-23: Engine (safety screen, per-point marker, moves in code, leak guard, signed state), 10 original sample items across 8 subjects, web UI with teacher view, 25 unit tests. Live conversations pass on Nebius Token Factory (Nemotron 3 Ultra + 3.5 Super VL), about 1 s a turn (measured from Korea).
 
 ---

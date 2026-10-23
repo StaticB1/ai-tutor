@@ -4,6 +4,7 @@ import { callModel } from "@/lib/tutor/model";
 import { buildReport } from "@/lib/tutor/report";
 import { open } from "@/lib/tutor/state";
 import { allow, clientKey } from "@/lib/rate-limit";
+import { renderInline, renderMaths } from "@/lib/render-maths";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -24,5 +25,6 @@ export async function POST(req: Request) {
   const state = open(parsed.data.token);
   const item = state ? getItem(state.itemId) : undefined;
   if (!state || !item) return Response.json({ error: "Session not found" }, { status: 400 });
-  return Response.json(await buildReport(callModel, item, state, parsed.data.history));
+  const r = await buildReport(callModel, item, state, parsed.data.history);
+  return Response.json({ ...r, summaryHtml: r.summary ? renderMaths(r.summary) : "", misconceptionsHtml: r.misconceptions.map((m) => renderInline(m)) });
 }

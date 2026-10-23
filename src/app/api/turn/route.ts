@@ -51,6 +51,7 @@ export async function POST(req: Request) {
       replyHtml: renderMaths(r.reply),
       token: seal(r.state),
       progress: { met: Math.min(r.state.met.length, needed(item)), needed: needed(item) },
+      hints: { used: Math.min(r.state.hintLevel, item.hints.length), total: item.hints.length },
       done: r.state.done,
       solutionHtml: r.solution ? r.solution.map((s) => renderMaths(s)) : null,
       move: r.trace.move,
