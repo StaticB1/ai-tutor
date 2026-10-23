@@ -1,0 +1,15 @@
+/* Copied verbatim from brand-assets/statotech-systems/kit/07-color-and-type/tokens.css (2026-10-20). Do not edit here; re-copy when the kit changes. */
+:root {
+  --st-navy: #143466;  /* Logo and structure — headings, links, rules, icons */
+  --st-navy-hi: #1D4A8C;  /* Hover for navy on light surfaces */
+  --st-lift: #6EA8FF;  /* Brand blue on dark surfaces (ink or navy) */
+  --st-ink: #0A0C10;  /* Near-black — dark surfaces and body text */
+  --st-ink-2: #12161D;  /* Raised surface on ink */
+  --st-paper: #FFFFFF;  /* Primary light surface */
+  --st-paper-2: #F7F8FA;  /* Secondary light surface */
+  --st-paper-3: #EFF1F5;  /* Tertiary light surface */
+  --st-mint: #3DDC97;  /* ACTION AND LIVE STATE ONLY — primary buttons, 'in production' dots */
+  --st-mint-on: #04241A;  /* Text on a mint fill */
+  --st-text-2: #4C5563;  /* Secondary text */
+  --st-muted: #666F7B;  /* Muted text, captions (passes AA on all paper tones) */
+}

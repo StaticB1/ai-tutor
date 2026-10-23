@@ -1,0 +1,69 @@
+@import "tailwindcss";
+@import "./tokens.css";
+@import "katex/dist/katex.min.css";
+
+/* Brand tokens (tokens.css) exposed to Tailwind. Mint is for action/live state only. */
+@theme inline {
+  --color-navy: var(--st-navy);
+  --color-navy-hi: var(--st-navy-hi);
+  --color-lift: var(--st-lift);
+  --color-ink: var(--st-ink);
+  --color-ink-2: var(--st-ink-2);
+  --color-paper: var(--st-paper);
+  --color-paper-2: var(--st-paper-2);
+  --color-paper-3: var(--st-paper-3);
+  --color-mint: var(--st-mint);
+  --color-mint-on: var(--st-mint-on);
+  --color-text-2: var(--st-text-2);
+  --color-muted: var(--st-muted);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-inter-tight);
+}
+
+body {
+  background: var(--st-paper);
+  color: var(--st-ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  line-height: 1.65;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-inter-tight), var(--font-inter), system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+a { color: var(--st-navy); }
+a:hover { color: var(--st-navy-hi); }
+
+:focus-visible { outline: 2px solid var(--st-navy); outline-offset: 2px; }
+
+/* Primary button on paper is ink, secondary is outlined; every button is a pill. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  border-radius: 9999px; padding: 0.6rem 1.25rem; font-weight: 500;
+  background: var(--st-ink); color: var(--st-paper); border: 1px solid var(--st-ink);
+}
+.btn:hover { background: var(--st-ink-2); color: var(--st-paper); }
+.btn:disabled { opacity: 0.5; }
+.btn-secondary { background: transparent; color: var(--st-ink); border-color: var(--st-text-2); }
+.btn-secondary:hover { background: var(--st-paper-2); color: var(--st-ink); }
+
+.card { border: 1px solid var(--st-paper-3); border-radius: 12px; background: var(--st-paper); }
+.eyebrow { font-family: ui-monospace, "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; color: var(--st-text-2); }
+
+/* Maths that is wider than a phone scrolls inside its own box, not the page. */
+.katex-display { overflow-x: auto; overflow-y: hidden; }
+
+/* Chat */
+.bubble { border-radius: 14px; padding: 0.7rem 0.95rem; max-width: 90%; }
+.bubble p + p { margin-top: 0.5rem; }
+.bubble-tutor { background: var(--st-paper-2); border: 1px solid var(--st-paper-3); color: var(--st-ink); }
+.bubble-learner { background: var(--st-navy); color: var(--st-paper); margin-left: auto; }
+.bubble-learner a { color: var(--st-lift); }
+.pill { display: inline-flex; align-items: center; gap: 0.35rem; border-radius: 9999px; padding: 0.15rem 0.6rem; font-size: 0.8rem; border: 1px solid var(--st-paper-3); color: var(--st-text-2); background: var(--st-paper); }
+.pill[aria-pressed="true"] { background: var(--st-ink); color: var(--st-paper); border-color: var(--st-ink); }
+.dot { width: 0.7rem; height: 0.7rem; border-radius: 9999px; border: 1.5px solid var(--st-navy); display: inline-block; }
+.dot-on { background: var(--st-navy); }
+.question p + p { margin-top: 0.5rem; }

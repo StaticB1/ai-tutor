@@ -1,0 +1,62 @@
+import { z } from "zod";
+import { getItem } from "@/content/items";
+import { MAX_LEARNER_CHARS, needed, takeTurn } from "@/lib/tutor/engine";
+import { callModel } from "@/lib/tutor/model";
+import { newState, open, seal } from "@/lib/tutor/state";
+import { allow, clientKey } from "@/lib/rate-limit";
+import { renderMaths } from "@/lib/render-maths";
+
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
+const Body = z.object({
+  itemId: z.string().max(80),
+  token: z.string().max(4000).nullable().optional(),
+  message: z.string().min(1).max(MAX_LEARNER_CHARS),
+  history: z
+    .array(z.object({ role: z.enum(["learner", "tutor"]), text: z.string().max(2000) }))
+    .max(80)
+    .default([]),
+});
+
+export async function POST(req: Request) {
+  if (process.env.TUTOR_DISABLED === "1") return Response.json({ error: "The tutor is resting. Please try again later." }, { status: 503 });
+  if (!allow(clientKey(req))) return Response.json({ error: "That's a lot of messages. Take a short break and try again in a few minutes." }, { status: 429 });
+
+  const parsed = Body.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return Response.json({ error: "Bad request" }, { status: 400 });
+  const { itemId, token, message, history } = parsed.data;
+
+  const item = getItem(itemId);
+  if (!item) return Response.json({ error: "No such question" }, { status: 404 });
+  const state = token ? open(token) : newState(item.id);
+  if (!state || state.itemId !== item.id) return Response.json({ error: "This session has expired. Please start the question again." }, { status: 400 });
+
+  try {
+    const r = await takeTurn(callModel, item, state, history, message);
+    // One line per turn for operators. No learner text, so nothing personal is logged.
+    console.log(
+      JSON.stringify({
+        turn: item.id,
+        move: r.trace.move,
+        met: r.state.met.length,
+        fallback: r.trace.usedFallback,
+        blocked: r.trace.leakBlocked,
+        ms: r.trace.usage.reduce((a, u) => a + u.ms, 0),
+        errors: r.trace.errors,
+      }),
+    );
+    return Response.json({
+      reply: r.reply,
+      replyHtml: renderMaths(r.reply),
+      token: seal(r.state),
+      progress: { met: Math.min(r.state.met.length, needed(item)), needed: needed(item) },
+      done: r.state.done,
+      solutionHtml: r.solution ? r.solution.map((s) => renderMaths(s)) : null,
+      move: r.trace.move,
+    });
+  } catch (e) {
+    console.error("turn failed", e);
+    return Response.json({ error: "The tutor couldn't answer just now. Please send that again." }, { status: 502 });
+  }
+}
