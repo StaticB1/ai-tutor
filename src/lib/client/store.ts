@@ -26,6 +26,9 @@ export interface SavedSession {
   progress: { met: number; needed: number };
   hints: { used: number; total: number };
   solution: string[] | null;
+  helpLeft?: number;
+  canReveal?: boolean;
+  revealed?: boolean;
   updatedAt: number;
 }
 
@@ -36,6 +39,8 @@ export interface Finished {
   needed: number;
   hintsUsed: number;
   messages: number;
+  /** the answer was shown after every hint */
+  withHelp?: boolean;
   finishedAt: number;
 }
 

@@ -76,6 +76,8 @@ export interface TutorState {
   answerRequests: number;
   /** times a draft reply was blocked for giving something away */
   leaksBlocked: number;
+  /** the answer was shown after every hint and worked step had been used ("done with help") */
+  revealed?: boolean;
 }
 
 export interface ChatTurn {
@@ -97,4 +99,5 @@ export type Move =
   | { kind: "hint"; hint: string }
   | { kind: "worked_step"; step: string }
   | { kind: "redirect"; reason: "asks_answer" | "off_topic"; hint: string | null }
-  | { kind: "welcome" };
+  | { kind: "welcome" }
+  | { kind: "reveal" };

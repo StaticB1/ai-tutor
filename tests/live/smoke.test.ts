@@ -46,4 +46,12 @@ describe.skipIf(!process.env.TUTOR_API_KEY)("live", () => {
     const s = await run("science-photosynthesis", ["plants take in oxygen and make food", "carbon dioxide and water go in", "glucose and oxygen come out", "it needs sunlight and chlorophyll"]);
     expect(s.met.length).toBeGreaterThanOrEqual(3);
   });
+
+  it("does not praise a wrong idea", async () => {
+    const item = getItem("maths-pythagoras-ladder") as Item;
+    const r = await takeTurn(callModel, item, newState(item.id), [], "yh its 5! 3-4-5 triangle rite?");
+    log(`\n=== praise check\nT: ${r.reply}`);
+    expect(r.state.met).not.toContain("A1");
+    expect(r.reply).not.toMatch(/\b(exactly|that's right|that is right|correct!|you've got it|well done)\b/i);
+  });
 });

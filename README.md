@@ -39,6 +39,7 @@ reply + signed session state
 ```
 
 - **State is signed** (HMAC). Points earned, hints used and whether the solution is unlocked live in a token the server signs, so a learner cannot edit their way to the answer. The chat history the browser sends is used as context only; it never earns marks.
+- **The answer opens only after every hint.** Hints come first, then worked steps one at a time. Once all of them are used, a "Show me the answer" button appears; the server checks the signed state before it shows anything. The question then counts as "done with help".
 - **Guesses do not count.** "Is it 12 or 17?" earns nothing and gets no confirmation either way.
 - **Any subject.** A question carries its mark scheme. Maths answers are checked numerically; other subjects are marked point by point, as a mark scheme lists them.
 
@@ -62,6 +63,21 @@ npm run eval                 # live conversations against the real models
 ```
 
 Node 24, Next.js 16. The leak evaluation (`tests/live/leaks.test.ts`) runs with `TUTOR_RUN_LEAK_EVAL=1` and writes `eval-results/leaks.json`.
+
+## How it was tested
+
+Unit tests run the engine against a fake model (`npm test`). Live tests run it against the real models on Token Factory.
+
+**Simulated learners** (`tests/live/learners.test.ts`): Nemotron 3.5 Lightning plays four kinds of learner on all ten questions, up to ten turns each. Nemotron 3 Ultra judges every tutor reply for leaks and for warmth (1 = harsh, 5 = warm). Measured on 2026-10-23 on the version in this repo:
+
+| Learner | Finished alone | Done with help | Still stuck | Mean warmth |
+| --- | --- | --- | --- | --- |
+| Struggles with the subject | 9 | 1 | 0 | 4.4 |
+| Capable | 10 | 0 | 0 | 4.9 |
+| Keeps demanding the answer | 3 | 7 | 0 | 4.3 |
+| Writes informal, misspelt English | 10 | 0 | 0 | 4.8 |
+
+Across 165 replies the judge rated none as harsh. It flagged two replies as leaks; in both the learner had typed the answer first and the tutor confirmed it. The first version of the tutor, run through the same test, left 8 of the 10 answer-demanding learners going round in circles with a canned "keep to the question" reply; the changes since then are in the git history.
 
 ## Adding questions
 

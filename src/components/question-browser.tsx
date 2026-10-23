@@ -130,7 +130,7 @@ export function QuestionBrowser({ items, subjects, levels }: { items: BrowserIte
                     </span>
                     {done ? (
                       <span className="status status-done inline-flex items-center gap-1">
-                        <Icon.check size={12} /> Done
+                        <Icon.check size={12} /> {done.withHelp ? "Done with help" : "Done"}
                       </span>
                     ) : going ? (
                       <span className="status status-going">In progress</span>

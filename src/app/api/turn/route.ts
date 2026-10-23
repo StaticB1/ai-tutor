@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { getItem } from "@/content/items";
-import { MAX_LEARNER_CHARS, needed, takeTurn } from "@/lib/tutor/engine";
+import { canReveal, helpLeft, MAX_LEARNER_CHARS, needed, revealTurn, takeTurn } from "@/lib/tutor/engine";
 import { callModel } from "@/lib/tutor/model";
 import { newState, open, seal } from "@/lib/tutor/state";
 import { allow, clientKey } from "@/lib/rate-limit";
@@ -12,7 +12,9 @@ export const maxDuration = 60;
 const Body = z.object({
   itemId: z.string().max(80),
   token: z.string().max(4000).nullable().optional(),
-  message: z.string().min(1).max(MAX_LEARNER_CHARS),
+  /** "reveal" is the Show-me-the-answer button; the server checks it is allowed */
+  action: z.enum(["message", "reveal"]).default("message"),
+  message: z.string().max(MAX_LEARNER_CHARS).default(""),
   history: z
     .array(z.object({ role: z.enum(["learner", "tutor"]), text: z.string().max(2000) }))
     .max(80)
@@ -25,7 +27,8 @@ export async function POST(req: Request) {
 
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return Response.json({ error: "Bad request" }, { status: 400 });
-  const { itemId, token, message, history } = parsed.data;
+  const { itemId, token, message, history, action } = parsed.data;
+  if (action === "message" && !message.trim()) return Response.json({ error: "Bad request" }, { status: 400 });
 
   const item = getItem(itemId);
   if (!item) return Response.json({ error: "No such question" }, { status: 404 });
@@ -33,7 +36,8 @@ export async function POST(req: Request) {
   if (!state || state.itemId !== item.id) return Response.json({ error: "This session has expired. Please start the question again." }, { status: 400 });
 
   try {
-    const r = await takeTurn(callModel, item, state, history, message);
+    const r = action === "reveal" ? revealTurn(item, state) : await takeTurn(callModel, item, state, history, message);
+    if (!r) return Response.json({ error: "Try the hints first. The answer opens once you've used them all." }, { status: 409 });
     // One line per turn for operators. No learner text, so nothing personal is logged.
     console.log(
       JSON.stringify({
@@ -52,6 +56,9 @@ export async function POST(req: Request) {
       token: seal(r.state),
       progress: { met: Math.min(r.state.met.length, needed(item)), needed: needed(item) },
       hints: { used: Math.min(r.state.hintLevel, item.hints.length), total: item.hints.length },
+      helpLeft: helpLeft(item, r.state),
+      canReveal: canReveal(item, r.state),
+      revealed: Boolean(r.state.revealed),
       done: r.state.done,
       solutionHtml: r.solution ? r.solution.map((s) => renderMaths(s)) : null,
       move: r.trace.move,

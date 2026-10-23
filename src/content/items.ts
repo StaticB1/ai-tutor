@@ -115,15 +115,19 @@ export const ITEMS: Item[] = [
     marks: 3,
     pointsNeeded: 3,
     markingPoints: [
-      { id: "contour", text: "Contour ploughing or contour ridges" },
-      { id: "terrace", text: "Terracing" },
+      { id: "contour", text: "Contour ploughing or contour ridges", leak: ["contour"] },
+      { id: "terrace", text: "Terracing", leak: ["terrace", "terraces", "terracing"] },
       { id: "trees", text: "Planting trees, agroforestry or keeping vegetation cover" },
-      { id: "cover", text: "Cover crops or mulching" },
+      { id: "cover", text: "Cover crops or mulching", leak: ["mulch", "mulching", "cover crop", "cover crops"] },
       { id: "grazing", text: "Controlling stock numbers or rotational grazing to stop overgrazing" },
       { id: "gully", text: "Filling gullies, stone lines or check dams" },
-      { id: "strip", text: "Strip cropping" },
+      { id: "strip", text: "Strip cropping", leak: ["strip cropping"] },
     ],
-    workedSolution: ["Slow down water running down the slope: contour ridges, terraces, stone lines.", "Keep the soil covered: trees, cover crops, mulch.", "Any three such as contour ridges, terracing and controlled grazing."],
+    workedSolution: [
+      "Soil on a slope is lost in two ways: rain water runs downhill fast and carries it, and bare soil has nothing holding it.",
+      "So each method either slows the water or covers the soil. For example, contour ridges slow the water. Now find two more.",
+      "Any three such as contour ridges, terracing and controlled grazing; also tree planting, cover crops or mulching, stone lines or check dams, strip cropping.",
+    ],
     misconceptions: [
       { id: "more-fertiliser", description: "Suggests adding fertiliser, which improves fertility but does not hold soil in place.", nudge: "Fertiliser helps crops grow. Does it stop rain water from carrying soil down the slope?" },
     ],
@@ -143,7 +147,11 @@ export const ITEMS: Item[] = [
       { id: "drought", text: "Drought and shortage of food or salt" },
       { id: "succession", text: "Disputes over succession or political splits, with groups moving away" },
     ],
-    workedSolution: ["Historians link the decline to pressure on the land and to changes in trade.", "Growth used up soil, grazing and firewood, and trade routes moved north.", "Any two such as exhaustion of resources and the shift of trade."],
+    workedSolution: [
+      "Think about what a large, growing town needs from the land around it, and where its wealth came from.",
+      "One reason: over a long time the people and cattle used up the soil, grazing land and firewood nearby. Now explain a second reason.",
+      "Any two such as the exhaustion of resources and the shift of the gold and ivory trade to the north; also drought, or disputes over who should rule.",
+    ],
     misconceptions: [
       { id: "colonial", description: "Blames European colonisers, who arrived centuries after the decline.", nudge: "When did Great Zimbabwe decline, and when did Europeans arrive in the area?" },
     ],

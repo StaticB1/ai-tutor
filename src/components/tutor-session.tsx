@@ -37,6 +37,9 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
   const [progress, setProgress] = useState(saved?.progress ?? { met: 0, needed: item.pointsNeeded });
   const [hints, setHints] = useState(saved?.hints ?? { used: 0, total: 0 });
   const [solution, setSolution] = useState<string[] | null>(saved?.solution ?? null);
+  const [helpLeft, setHelpLeft] = useState<number | null>(saved?.helpLeft ?? null);
+  const [revealable, setRevealable] = useState(saved?.canReveal ?? false);
+  const [revealed, setRevealed] = useState(saved?.revealed ?? false);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState<string | null>(null);
   const [errorText, setErrorText] = useState<string | null>(null);
@@ -56,8 +59,8 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
   // Save after every change, so a refresh or a dropped connection loses nothing.
   useEffect(() => {
     if (lines.length === 0 && !token) return;
-    store.saveSession({ itemId: item.id, lines, token, progress, hints, solution, updatedAt: Date.now() });
-  }, [item.id, lines, token, progress, hints, solution]);
+    store.saveSession({ itemId: item.id, lines, token, progress, hints, solution, helpLeft: helpLeft ?? undefined, canReveal: revealable, revealed, updatedAt: Date.now() });
+  }, [item.id, lines, token, progress, hints, solution, helpLeft, revealable, revealed]);
 
   // "/" jumps to the answer box, as on many learning sites.
   useEffect(() => {
@@ -84,7 +87,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
     speak(text, () => setSpeaking((cur) => (cur === n ? null : cur)));
   }, [speaking]);
 
-  async function send(message: string) {
+  async function send(message: string, action: "message" | "reveal" = "message") {
     if (busy || solution) return;
     setBusy(true);
     setFailed(null);
@@ -98,7 +101,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
       const res = await fetch("/api/turn", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ itemId: item.id, token, message, history }),
+        body: JSON.stringify({ itemId: item.id, token, message, history, action }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? "Something went wrong. Please try again.");
@@ -106,6 +109,9 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
       setToken(data.token);
       setProgress(data.progress);
       if (data.hints) setHints(data.hints);
+      if (typeof data.helpLeft === "number") setHelpLeft(data.helpLeft);
+      setRevealable(Boolean(data.canReveal));
+      if (data.revealed) setRevealed(true);
       setLines((l) => [...l, { role: "tutor" as const, text: data.reply, html: data.replyHtml }]);
       if (prefs?.readAloud && speechAvailable()) {
         // the learner's line went in at index lines.length, so the reply lands one after it
@@ -119,7 +125,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
       }
       if (data.solutionHtml) {
         setSolution(data.solutionHtml);
-        setCelebrate(true);
+        if (!data.revealed) setCelebrate(true);
         store.markFinished({
           itemId: item.id,
           subject: item.subject,
@@ -127,6 +133,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
           needed: data.progress.needed,
           hintsUsed: data.hints?.used ?? hints.used,
           messages: lines.filter((l) => l.role === "learner").length + 1,
+          withHelp: Boolean(data.revealed),
           finishedAt: Date.now(),
         });
       }
@@ -150,6 +157,9 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
     setProgress({ met: 0, needed: item.pointsNeeded });
     setHints({ used: 0, total: 0 });
     setSolution(null);
+    setHelpLeft(null);
+    setRevealable(false);
+    setRevealed(false);
     setCelebrate(false);
     setQuestionOpen(true);
     setFailed(null);
@@ -162,6 +172,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
     if (learnerCount === 0) return ["Where do I start?", "Explain the question in simpler words", "I'm stuck"];
     return ["I'm stuck", "Check my working so far", "What does that mean?", "Explain it another way"];
   }, [solution, learnerCount]);
+  const sendLearner = (t: string) => send(t);
 
   const next = useMemo(() => {
     const done = finished ?? {};
@@ -229,6 +240,11 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
                 </span>
               )}
             </div>
+            {!solution && helpLeft !== null && helpLeft > 0 && learnerCount > 0 && (
+              <p className="text-xs text-muted">
+                Stuck? The full answer opens after {helpLeft} more {helpLeft === 1 ? "hint or step" : "hints or steps"}. Tap &ldquo;I&apos;m stuck&rdquo; to get them.
+              </p>
+            )}
             <div className="meter" role="progressbar" aria-valuemin={0} aria-valuemax={progress.needed} aria-valuenow={progress.met} aria-label="Points earned">
               {Array.from({ length: progress.needed }, (_, n) => (
                 <span key={`${n}-${popFrom}`} className={`${n < progress.met ? "on" : ""} ${popFrom !== null && n >= popFrom && n < progress.met ? "pop" : ""}`} />
@@ -285,6 +301,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
 
         {solution ? (
           <Finished
+            revealed={revealed}
             progress={progress}
             hintsUsed={hints.used}
             messages={learnerCount}
@@ -295,7 +312,15 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
           />
         ) : (
           <div className="sticky bottom-0 bg-paper pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] no-print">
-            <Composer ref={composer} busy={busy} quickReplies={quickReplies} showKeypadByDefault={false} onSend={send} maxLength={MAX_CHARS} />
+            {revealable && (
+              <div className="card p-3 mb-2 flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm">You&apos;ve used every hint. Keep trying, or see the answer with the full working.</p>
+                <button type="button" className="btn btn-secondary btn-sm" disabled={busy} onClick={() => send("Please show me the answer.", "reveal")}>
+                  <Icon.bulb size={15} /> Show me the answer
+                </button>
+              </div>
+            )}
+            <Composer ref={composer} busy={busy} quickReplies={quickReplies} showKeypadByDefault={false} onSend={sendLearner} maxLength={MAX_CHARS} />
             {NUMERIC_SUBJECTS.has(item.subject) && learnerCount === 0 && (
               <p className="text-xs text-muted mt-2 flex items-center gap-1">
                 <Icon.keypad size={13} /> Tap the keypad button for maths symbols like × ÷ ² √
@@ -352,6 +377,7 @@ function TutorBubble({ n, text, html, speaking, onRead, canSpeak }: { n: number;
 }
 
 function Finished({
+  revealed,
   progress,
   hintsUsed,
   messages,
@@ -360,6 +386,7 @@ function Finished({
   onReport,
   onRestart,
 }: {
+  revealed: boolean;
   progress: { met: number; needed: number };
   hintsUsed: number;
   messages: number;
@@ -368,17 +395,23 @@ function Finished({
   onReport: () => void;
   onRestart: () => void;
 }) {
-  const praise = hintsUsed === 0 ? "You worked it out without a single hint." : hintsUsed === 1 ? "You needed just one hint." : `You worked through it with ${hintsUsed} hints.`;
+  const praise = revealed
+    ? "You kept going through every hint, and that effort counts. Read the working below, then try the next one on your own."
+    : hintsUsed === 0
+      ? "You worked it out without a single hint."
+      : hintsUsed === 1
+        ? "You needed just one hint."
+        : `You worked through it with ${hintsUsed} hints.`;
   return (
     <div className="space-y-4">
       <section className="card p-5 space-y-4 border-navy" aria-labelledby="done-title">
         <div className="flex items-center gap-3">
           <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-navy text-paper">
-            <Icon.trophy size={24} />
+            {revealed ? <Icon.bulb size={24} /> : <Icon.trophy size={24} />}
           </span>
           <div>
             <h2 id="done-title" className="text-2xl">
-              Question complete
+              {revealed ? "Done with help" : "Question complete"}
             </h2>
             <p className="text-text-2">{praise}</p>
           </div>

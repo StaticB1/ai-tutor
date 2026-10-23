@@ -20,7 +20,7 @@ export function ProgressView({ items, subjects }: { items: Meta[]; subjects: str
   const done = Object.values(finished).sort((a, b) => b.finishedAt - a.finishedAt);
   const points = done.reduce((a, f) => a + f.points, 0);
   const hints = done.reduce((a, f) => a + f.hintsUsed, 0);
-  const noHint = done.filter((f) => f.hintsUsed === 0).length;
+  const noHint = done.filter((f) => f.hintsUsed === 0 && !f.withHelp).length;
 
   return (
     <div className="space-y-8">
@@ -123,6 +123,7 @@ export function ProgressView({ items, subjects }: { items: Meta[]; subjects: str
                   <SubjectIcon subject={f.subject} size={18} className="text-navy" />
                   <span className="flex-1 min-w-[10rem]">{it?.topic ?? f.itemId}</span>
                   <span className="text-sm text-text-2">
+                    {f.withHelp ? "Done with help · " : ""}
                     {f.points}/{f.needed} points · {f.hintsUsed} {f.hintsUsed === 1 ? "hint" : "hints"}
                   </span>
                   <span className="text-xs text-muted">{new Date(f.finishedAt).toLocaleDateString()}</span>

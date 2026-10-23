@@ -17,11 +17,12 @@ export async function buildReport(call: ModelCall, item: Item, state: TutorState
   const missing = item.markingPoints.filter((p) => !state.met.includes(p.id)).map((p) => p.text);
   const misconceptions = item.misconceptions.filter((m) => state.misconceptions.includes(m.id)).map((m) => m.description);
   const facts = [
-    { label: "Finished", value: state.done ? "Yes" : "Not yet" },
+    { label: "Finished", value: state.done ? (state.revealed ? "Yes, with help" : "Yes") : "Not yet" },
     { label: "Marking points shown", value: `${Math.min(state.met.length, needed(item))} of ${needed(item)}` },
     { label: "Hints used", value: String(state.hintLevel) },
     { label: "Worked steps shown", value: String(state.stepsShown) },
     { label: "Asked for the answer", value: String(state.answerRequests) },
+    { label: "Answer shown after all hints", value: state.revealed ? "Yes" : "No" },
     { label: "Replies blocked for giving too much away", value: String(state.leaksBlocked) },
     { label: "Learner messages", value: String(state.turns) },
   ];

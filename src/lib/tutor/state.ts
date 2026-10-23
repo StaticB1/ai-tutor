@@ -29,6 +29,7 @@ export function newState(itemId: string): TutorState {
     misconceptions: [],
     answerRequests: 0,
     leaksBlocked: 0,
+    revealed: false,
   };
 }
 
