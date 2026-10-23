@@ -6,6 +6,7 @@ import type { Item } from "@/lib/tutor/types";
 export const ITEMS: Item[] = [
   {
     id: "maths-linear-equation",
+    art: "/illustrations/q-maths-linear-equation.webp",
     subject: "Mathematics",
     level: "Form 2",
     topic: "Linear equations",
@@ -29,6 +30,7 @@ export const ITEMS: Item[] = [
   },
   {
     id: "maths-successive-discount",
+    art: "/illustrations/q-maths-successive-discount.webp",
     subject: "Mathematics",
     level: "Form 3",
     topic: "Percentages",
@@ -49,6 +51,7 @@ export const ITEMS: Item[] = [
   },
   {
     id: "maths-pythagoras-ladder",
+    art: "/illustrations/q-maths-pythagoras-ladder.webp",
     subject: "Mathematics",
     level: "Form 4",
     topic: "Pythagoras' theorem",

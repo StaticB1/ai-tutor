@@ -7,9 +7,9 @@ import { Icon } from "./icons";
 import { applyPrefs, store, useStore, type Prefs } from "@/lib/client/store";
 
 const NAV = [
-  { href: "/", label: "Questions", icon: Icon.book },
-  { href: "/progress", label: "My progress", icon: Icon.chart },
-  { href: "/how-it-works", label: "How it works", icon: Icon.info },
+  { href: "/#questions", match: "/", label: "Questions", icon: Icon.book },
+  { href: "/progress", match: "/progress", label: "My progress", icon: Icon.chart },
+  { href: "/how-it-works", match: "/how-it-works", label: "How it works", icon: Icon.info },
 ];
 
 export function SiteHeader() {
@@ -42,39 +42,40 @@ export function SiteHeader() {
   const set = (p: Partial<Prefs>) => store.setPrefs(p);
 
   return (
-    <header className="border-b border-paper-3 sticky top-0 z-30 bg-paper/90 backdrop-blur no-print">
-      <div className="mx-auto max-w-6xl px-4 h-14 flex items-center justify-between gap-3">
-        <Link href="/" className="flex items-center gap-2 font-display font-semibold text-ink no-underline shrink-0">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-navy text-paper">
-            <Icon.bulb size={16} />
+    <header className="sticky top-0 z-30 bg-paper/95 backdrop-blur-md no-print">
+      <div className="mx-auto max-w-[1360px] px-4 sm:px-6 lg:px-10 h-16 sm:h-[80px] flex items-center justify-between gap-3">
+        <Link href="/" className="flex items-center gap-3 font-display font-extrabold text-[1.35rem] sm:text-[1.65rem] tracking-[-0.035em] text-ink no-underline shrink-0">
+          <span className="inline-flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-[12px] bg-navy text-paper shadow-sm">
+            <Icon.bulbRays size={24} />
           </span>
           AI Tutor
         </Link>
-        <nav className="flex items-center gap-1" aria-label="Main">
-          {NAV.map(({ href, label, icon: I }) => {
-            const active = href === "/" ? path === "/" || path.startsWith("/tutor") : path.startsWith(href);
+        <nav className="flex items-center gap-0.5 sm:gap-1" aria-label="Main">
+          {NAV.map(({ href, match, label, icon: I }) => {
+            const active = match === "/" ? path === "/" || path.startsWith("/tutor") : path.startsWith(match);
             return (
               <Link
                 key={href}
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm no-underline ${active ? "bg-paper-3 text-ink font-medium" : "text-text-2 hover:text-ink"}`}
+                className={`flex items-center gap-1.5 px-3 sm:px-4 h-10 text-[1rem] no-underline transition-colors ${active ? "text-navy font-semibold" : "text-navy/75 font-medium hover:text-navy"}`}
               >
-                <I size={16} />
+                <I size={18} className="sm:hidden" />
                 <span className="hidden sm:inline">{label}</span>
                 <span className="sr-only sm:hidden">{label}</span>
               </Link>
             );
           })}
           <div className="relative" ref={panel}>
-            <button type="button" className="icon-btn" aria-label="Display settings" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-              <Icon.type size={18} />
+            <button type="button" className="icon-btn font-display font-bold text-ink" aria-label="Display settings" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+              <span className="text-[12px] leading-none mr-0.5 self-end mb-[11px]">A</span>
+              <span className="text-[19px] leading-none self-end mb-[10px]">A</span>
             </button>
             {open && prefs && (
-              <div className="card absolute right-0 top-11 w-72 p-4 space-y-4 shadow-lg" role="dialog" aria-label="Display settings">
+              <div className="float-card absolute right-0 top-12 w-72 p-4 space-y-4" role="dialog" aria-label="Display settings">
                 <fieldset>
                   <legend className="eyebrow mb-2">Theme</legend>
-                  <div className="grid grid-cols-3 gap-1">
+                  <div className="grid grid-cols-3 gap-1.5">
                     {(
                       [
                         ["system", "Auto", Icon.monitor],
@@ -82,7 +83,7 @@ export function SiteHeader() {
                         ["dark", "Dark", Icon.moon],
                       ] as const
                     ).map(([v, l, I]) => (
-                      <button key={v} type="button" className="pill justify-center" aria-pressed={prefs.theme === v} onClick={() => set({ theme: v })}>
+                      <button key={v} type="button" className="pill h-10! px-0! justify-center" aria-pressed={prefs.theme === v} onClick={() => set({ theme: v })}>
                         <I size={14} /> {l}
                       </button>
                     ))}
@@ -90,11 +91,11 @@ export function SiteHeader() {
                 </fieldset>
                 <fieldset>
                   <legend className="eyebrow mb-2">Text size</legend>
-                  <div className="grid grid-cols-2 gap-1">
-                    <button type="button" className="pill justify-center" aria-pressed={prefs.text === "normal"} onClick={() => set({ text: "normal" })}>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <button type="button" className="pill h-10! justify-center" aria-pressed={prefs.text === "normal"} onClick={() => set({ text: "normal" })}>
                       Normal
                     </button>
-                    <button type="button" className="pill justify-center text-base" aria-pressed={prefs.text === "large"} onClick={() => set({ text: "large" })}>
+                    <button type="button" className="pill h-10! justify-center text-base!" aria-pressed={prefs.text === "large"} onClick={() => set({ text: "large" })}>
                       Large
                     </button>
                   </div>

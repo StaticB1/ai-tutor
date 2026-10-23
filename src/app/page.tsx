@@ -2,49 +2,95 @@ import Link from "next/link";
 import { ITEMS } from "@/content/items";
 import { subjects } from "@/lib/tutor/catalog";
 import { renderInline } from "@/lib/render-maths";
+import { itemArt } from "@/lib/art";
 import { QuestionBrowser } from "@/components/question-browser";
 import { LearnerDashboard } from "@/components/learner-dashboard";
 import { Icon } from "@/components/icons";
 
+const PROMISES = [
+  { icon: Icon.bookOpen, title: "Hints first, answer last", text: "Guidance one step at a time." },
+  { icon: Icon.clipboard, title: "Marked step by step", text: "See which marks you have earned." },
+  { icon: Icon.phone, title: "Works on any phone", text: "Light pages, no app to install." },
+];
+
 export default function Home() {
   const levels = Array.from(new Set(ITEMS.map((i) => i.level))).sort();
-  const browserItems = ITEMS.map((i) => ({ id: i.id, subject: i.subject, level: i.level, topic: i.topic, marks: i.marks, questionHtml: renderInline(i.question) }));
+  const browserItems = ITEMS.map((i) => ({
+    id: i.id,
+    subject: i.subject,
+    level: i.level,
+    topic: i.topic,
+    marks: i.marks,
+    art: itemArt(i),
+    questionHtml: renderInline(i.question),
+  }));
 
   return (
-    <div className="space-y-6 sm:space-y-12">
-      <section className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(320px,46%)] xl:grid-cols-[minmax(0,1fr)_520px] items-center gap-6 xl:gap-10">
-        <div className="space-y-4 min-w-0">
-          <p className="eyebrow">Any subject · Form 1 to 4</p>
-          <h1 className="text-[36px] leading-[39px] sm:text-5xl xl:text-[52px] xl:leading-[1.05] tracking-[-0.04em] text-ink">
-            A tutor that helps you <span className="text-navy">work it out.</span>
+    <div className="space-y-12 sm:space-y-16">
+      {/* Hero */}
+      <section className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-center gap-10 lg:gap-12 lg:min-h-[560px]">
+        <div className="space-y-6 min-w-0">
+          <p className="eyebrow text-[0.85rem]!">Any subject · Form 1 to 4</p>
+          <h1 className="text-[2.6rem] leading-[1.02] sm:text-[3.75rem] xl:text-[4.6rem] tracking-[-0.05em] font-extrabold text-ink">
+            A tutor that <span className="block text-navy">helps you work&nbsp;it&nbsp;out.</span>
           </h1>
-          <p className="text-lg text-text-2 max-w-[30rem]">
-            Choose a question, try a step, and get a hint when you need one.
-            <span className="hidden sm:inline"> Hints and worked steps come first; the full answer opens once you have tried them all.</span>
-          </p>
-          <div className="flex flex-wrap items-center gap-3 pt-1">
-            <a href="#questions" className="btn h-12 px-6">
+          <p className="text-lg sm:text-[1.35rem] text-text-2 max-w-[30rem] leading-relaxed">Choose a question, try a step, and get a hint when you need one.</p>
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-3 pt-2">
+            <a href="#questions" className="btn btn-lg h-[3.9rem]! px-8! text-[1.1rem]!">
               Choose a question <Icon.arrowRight size={18} />
             </a>
-            <Link href="/how-it-works" className="inline-flex items-center gap-1.5 text-sm font-medium">
-              <Icon.shield size={16} /> How it works
+            <Link href="/how-it-works" className="text-[1.1rem] font-semibold underline underline-offset-[6px] decoration-2 decoration-navy/30 hover:decoration-navy">
+              How it works
             </Link>
           </div>
         </div>
-        <div className="mx-auto w-[180px] sm:w-[320px] lg:w-full max-w-[520px] rounded-[28px] art-tile overflow-hidden">
+
+        <div className="relative mx-auto w-full max-w-[660px] lg:-mr-4">
+          <div className="absolute left-[7%] right-[3%] top-[9%] bottom-[3%] rounded-[32px] bg-gradient-to-br from-tint-2 to-tint-1" aria-hidden="true" />
           <img
             src="/illustrations/hero.webp"
             alt="A learner in school uniform working through a maths question on her phone"
-            width={520}
-            height={420}
-            className="w-full h-auto"
+            width={560}
+            height={452}
+            className="relative w-full h-auto mix-blend-multiply dark:mix-blend-normal dark:rounded-[32px]"
             fetchPriority="high"
             decoding="async"
           />
+          {/* Two floating cards show what the tutor feels like. Decorative, so hidden from screen readers. */}
+          <div aria-hidden="true" className="float-card bubble-tail absolute hidden sm:flex sm:-left-8 top-[8%] w-[19.5rem] px-5 py-4 gap-3">
+            <Icon.sparkle size={22} className="text-lift shrink-0 mt-0.5" />
+            <p className="text-[1.02rem] leading-snug text-ink">Good start. What happens when you multiply 3 by −4?</p>
+          </div>
+          <div aria-hidden="true" className="float-card absolute right-3 sm:-right-2 bottom-[8%] sm:bottom-auto sm:top-[21%] w-[9.5rem] sm:w-[13.5rem] p-3.5 sm:px-5 sm:py-4 space-y-3">
+            <div className="flex items-center justify-between text-xs sm:text-sm font-semibold">
+              <span>Points</span>
+              <span className="text-navy">2 of 3</span>
+            </div>
+            <div className="segments segments-sm segments-lift">
+              <span className="on" />
+              <span className="on" />
+              <span />
+            </div>
+          </div>
         </div>
       </section>
 
-      <LearnerDashboard items={ITEMS.map((i) => ({ id: i.id, subject: i.subject, topic: i.topic }))} />
+      {/* Promises */}
+      <section aria-label="What the tutor does" className="panel-tint grid grid-cols-1 sm:grid-cols-3 sm:divide-x divide-[color-mix(in_srgb,var(--st-navy)_14%,transparent)] px-2 py-4 sm:py-7 lg:-mx-4">
+        {PROMISES.map(({ icon: I, title, text }) => (
+          <div key={title} className="flex items-center gap-5 px-4 py-2 sm:px-8">
+            <span className="icon-circle h-14 w-14 sm:h-16 sm:w-16">
+              <I size={28} />
+            </span>
+            <div>
+              <p className="font-display font-bold text-[1.15rem] text-navy tracking-[-0.02em]">{title}</p>
+              <p className="text-[0.98rem] text-text-2">{text}</p>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <LearnerDashboard items={ITEMS.map((i) => ({ id: i.id, subject: i.subject, topic: i.topic, art: itemArt(i) }))} />
 
       <QuestionBrowser items={browserItems} subjects={subjects()} levels={levels} />
     </div>

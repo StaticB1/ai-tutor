@@ -17,6 +17,8 @@ export interface SavedLine {
   role: "learner" | "tutor";
   text: string;
   html?: string;
+  /** points this reply confirmed, shown as a reward chip under it */
+  gain?: number;
 }
 
 export interface SavedSession {

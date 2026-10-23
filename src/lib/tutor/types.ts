@@ -31,6 +31,8 @@ export interface Item {
   /** shown: markdown with $...$ maths */
   question: string;
   marks: number;
+  /** shown: this question's own illustration (public/illustrations/…); falls back to the subject's */
+  art?: string;
   /** hidden */
   markingPoints: MarkingPoint[];
   /** how many marking points complete the item; defaults to all of them ("any 3 of" questions set fewer) */
@@ -47,6 +49,7 @@ export interface Item {
 
 export interface PublicItem {
   id: string;
+  art: string;
   subject: string;
   level: string;
   topic: string;

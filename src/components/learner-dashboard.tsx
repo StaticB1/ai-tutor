@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { Icon } from "./icons";
 import { store, useStore } from "@/lib/client/store";
-import { subjectArt } from "@/lib/art";
 
 export interface ItemMeta {
   id: string;
   subject: string;
   topic: string;
+  art: string;
 }
 
 const TIPS = [
@@ -35,7 +35,7 @@ export function LearnerDashboard({ items }: { items: ItemMeta[] }) {
       {latest && latestItem && (
         <Link href={`/tutor/${latestItem.id}`} className="card card-link p-3 sm:p-4 flex items-center gap-4 no-underline text-ink">
           <span className="art-tile rounded-xl shrink-0 overflow-hidden">
-            <img src={subjectArt(latestItem.subject)} alt="" width={56} height={56} className="h-14 w-14" loading="lazy" />
+            <img src={latestItem.art} alt="" width={56} height={56} className="h-14 w-14" loading="lazy" />
           </span>
           <span className="flex-1 min-w-0">
             <span className="eyebrow block">Continue where you left off</span>
@@ -68,18 +68,18 @@ export function LearnerDashboard({ items }: { items: ItemMeta[] }) {
           ))}
         </dl>
       ) : (
-        <div className="rounded-2xl bg-paper-2 px-4 py-3 min-h-[56px] flex items-center justify-between gap-3">
-          <p className="text-sm text-text-2 flex items-center gap-2">
+        <div className="rounded-[20px] bg-paper-2 px-6 py-4 min-h-[64px] flex items-center justify-between gap-3">
+          <p className="text-[1rem] text-text-2 flex items-center gap-2.5">
             <Icon.flame size={16} className="text-navy shrink-0" /> Your progress starts with your first question.
           </p>
-          <Link href="/progress" className="text-sm font-medium whitespace-nowrap">
+          <Link href="/progress" className="font-semibold whitespace-nowrap">
             My progress
           </Link>
         </div>
       )}
 
-      <details className="group rounded-2xl border border-paper-3">
-        <summary className="cursor-pointer list-none flex items-center justify-between gap-3 px-4 h-11 text-sm font-medium text-navy">
+      <details className="group rounded-[20px] border border-line bg-paper">
+        <summary className="cursor-pointer list-none flex items-center justify-between gap-3 px-6 h-14 text-[1rem] font-semibold text-navy">
           <span className="inline-flex items-center gap-2">
             <Icon.info size={16} /> New here? How to use your tutor
           </span>

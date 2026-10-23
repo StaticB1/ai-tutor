@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Icon, SubjectIcon } from "./icons";
+import { Icon } from "./icons";
 import { store, useStore } from "@/lib/client/store";
-import { subjectArt } from "@/lib/art";
 
 export interface BrowserItem {
   id: string;
@@ -13,6 +12,8 @@ export interface BrowserItem {
   level: string;
   topic: string;
   marks: number;
+  /** this question's own illustration */
+  art: string;
   /** question text already rendered to HTML on the server */
   questionHtml: string;
 }
@@ -49,26 +50,26 @@ export function QuestionBrowser({ items, subjects, levels }: { items: BrowserIte
   }
 
   return (
-    <section id="questions" className="space-y-4 scroll-mt-20" aria-labelledby="questions-title">
+    <section id="questions" className="space-y-6 scroll-mt-24" aria-labelledby="questions-title">
       <div className="flex items-end justify-between gap-3">
-        <h2 id="questions-title" className="text-xl sm:text-2xl">
+        <h2 id="questions-title" className="text-[2.2rem] sm:text-[3.2rem] tracking-[-0.045em] font-extrabold text-navy">
           Choose a question
         </h2>
-        <button type="button" className="btn btn-secondary btn-sm" onClick={surprise}>
-          <Icon.shuffle size={16} /> Surprise me
+        <button type="button" className="btn btn-secondary" onClick={surprise}>
+          <Icon.shuffle size={18} /> Surprise me
         </button>
       </div>
 
       <div className="space-y-2">
-        <label className="composer flex items-center gap-2 px-4 h-12">
-          <Icon.search size={18} className="text-muted shrink-0" />
+        <label className="composer flex items-center gap-3.5 px-6 h-16">
+          <Icon.search size={22} className="text-lift shrink-0" />
           <span className="sr-only">Search questions</span>
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search a topic: percentages, erosion, binary…"
-            className="w-full bg-transparent outline-none text-base"
+            className="w-full bg-transparent outline-none text-[1.1rem]"
           />
         </label>
 
@@ -93,18 +94,18 @@ export function QuestionBrowser({ items, subjects, levels }: { items: BrowserIte
         </div>
 
         {/* Larger screens: every subject visible as a pill, form as pills too. */}
-        <div className="hidden md:flex flex-wrap items-center gap-2" role="group" aria-label="Subjects and forms">
-          <button type="button" className="pill h-9" aria-pressed={!subject} onClick={() => setSubject(null)}>
+        <div className="hidden md:flex flex-wrap items-center gap-3 pt-3" role="group" aria-label="Subjects and forms">
+          <button type="button" className="pill" aria-pressed={!subject} onClick={() => setSubject(null)}>
             All subjects
           </button>
           {subjects.map((s) => (
-            <button key={s} type="button" className="pill h-9" aria-pressed={subject === s} onClick={() => setSubject(subject === s ? null : s)}>
-              <SubjectIcon subject={s} size={15} /> {s}
+            <button key={s} type="button" className="pill" aria-pressed={subject === s} onClick={() => setSubject(subject === s ? null : s)}>
+              {s}
             </button>
           ))}
           <span className="mx-1 h-6 w-px bg-paper-3" aria-hidden="true" />
           {levels.map((l) => (
-            <button key={l} type="button" className="pill h-9" aria-pressed={level === l} onClick={() => setLevel(level === l ? null : l)}>
+            <button key={l} type="button" className="pill" aria-pressed={level === l} onClick={() => setLevel(level === l ? null : l)}>
               {l}
             </button>
           ))}
@@ -135,38 +136,36 @@ export function QuestionBrowser({ items, subjects, levels }: { items: BrowserIte
           </button>
         </div>
       ) : (
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {shown.map((i) => {
             const done = finished[i.id];
             const going = !done && openIds.has(i.id);
             return (
               <li key={i.id}>
-                <Link href={`/tutor/${i.id}`} className="card card-link flex flex-col justify-between p-4 no-underline text-ink h-full sm:min-h-[200px] rounded-2xl">
-                  <div className="grid grid-cols-[minmax(0,1fr)_72px] md:grid-cols-[minmax(0,1fr)_88px] gap-3">
-                    <div className="min-w-0">
-                      <p className="eyebrow text-[10px]! text-muted! truncate">
-                        {i.subject} · {i.level}
-                      </p>
-                      <p className="font-display font-semibold text-[17px] leading-[22px] text-navy mt-1">{i.topic}</p>
-                      <p className="mt-2 line-clamp-2 text-[13px] leading-5 text-text-2" dangerouslySetInnerHTML={{ __html: i.questionHtml }} />
-                    </div>
-                    <span className="art-tile rounded-xl overflow-hidden h-[72px] w-[72px] md:h-[88px] md:w-[88px]">
-                      <img src={subjectArt(i.subject)} alt="" width={88} height={88} className="h-full w-full object-contain" loading="lazy" decoding="async" />
-                    </span>
-                  </div>
-                  <div className="mt-4 flex items-center justify-between gap-2">
-                    <span className="text-xs text-muted">
-                      {done ? `${done.points}/${done.needed} points${done.withHelp ? " · with help" : ""}` : `${i.marks} marks`}
-                    </span>
-                    {done ? (
-                      <span className="status status-done inline-flex items-center gap-1">
+                <Link href={`/tutor/${i.id}`} className="card card-link flex flex-col h-full no-underline text-ink overflow-hidden">
+                  <div className="relative flex items-center justify-center h-48 sm:h-56 px-8 pt-7 pb-1">
+                    <img src={i.art} alt="" width={240} height={240} className="h-full w-auto max-w-[80%] object-contain" loading="lazy" decoding="async" />
+                    {done && (
+                      <span className="status status-done absolute right-4 top-4 inline-flex items-center gap-1">
                         <Icon.check size={12} /> Done
                       </span>
-                    ) : (
-                      <span className="text-[13px] font-semibold text-navy inline-flex items-center gap-1">
-                        {going ? "Continue" : "Start question"} <Icon.arrowRight size={14} />
-                      </span>
                     )}
+                    {going && <span className="status absolute right-4 top-4 bg-paper">In progress</span>}
+                  </div>
+                  <div className="flex-1 px-7 pt-5 pb-5">
+                    <p className="eyebrow text-[0.78rem]! truncate">
+                      {i.subject} · {i.level}
+                    </p>
+                    <p className="font-display font-extrabold text-[1.6rem] leading-tight tracking-[-0.03em] text-navy mt-2">{i.topic}</p>
+                    <p className="mt-2.5 line-clamp-3 text-[1.05rem] leading-relaxed text-text-2" dangerouslySetInnerHTML={{ __html: i.questionHtml }} />
+                  </div>
+                  <div className="mx-7 border-t border-line py-5 flex items-center justify-between gap-2">
+                    <span className="text-[0.98rem] text-text-2">
+                      {done ? `${done.points}/${done.needed} points${done.withHelp ? " · with help" : ""}` : `${i.marks} marks`}
+                    </span>
+                    <span className="text-[0.98rem] font-bold text-navy inline-flex items-center gap-2">
+                      {done ? "Try again" : going ? "Continue" : "Start question"} <Icon.arrowRight size={16} />
+                    </span>
                   </div>
                 </Link>
               </li>

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getItem, ITEMS } from "@/content/items";
 import { publicItem } from "@/lib/tutor/catalog";
 import { renderMaths } from "@/lib/render-maths";
+import { itemArt } from "@/lib/art";
 import { TutorSession } from "@/components/tutor-session";
 
 export function generateStaticParams() {
@@ -22,7 +23,7 @@ export default async function TutorPage({ params }: { params: Promise<{ id: stri
       key={item.id}
       item={publicItem(item)}
       questionHtml={renderMaths(item.question)}
-      all={ITEMS.map((i) => ({ id: i.id, subject: i.subject, topic: i.topic }))}
+      all={ITEMS.map((i) => ({ id: i.id, subject: i.subject, topic: i.topic, art: itemArt(i) }))}
     />
   );
 }

@@ -6,7 +6,7 @@ import { PREFS_BOOT_SCRIPT } from "@/lib/client/store";
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
-const interTight = Inter_Tight({ variable: "--font-inter-tight", subsets: ["latin"], weight: ["600", "700"] });
+const interTight = Inter_Tight({ variable: "--font-inter-tight", subsets: ["latin"], weight: ["600", "700", "800"] });
 
 export const metadata: Metadata = {
   title: { default: "AI Tutor", template: "%s · AI Tutor" },
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           Skip to content
         </a>
         <SiteHeader />
-        <main id="main" className="mx-auto w-full max-w-6xl px-4 py-6 sm:py-8 flex-1">
+        <main id="main" className="mx-auto w-full max-w-[1360px] px-4 sm:px-6 lg:px-10 py-6 sm:py-8 flex-1">
           {children}
         </main>
         <SiteFooter />
