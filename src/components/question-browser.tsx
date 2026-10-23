@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Icon, SubjectIcon } from "./icons";
 import { store, useStore } from "@/lib/client/store";
+import { subjectArt } from "@/lib/art";
 
 export interface BrowserItem {
   id: string;
@@ -29,6 +30,7 @@ export function QuestionBrowser({ items, subjects, levels }: { items: BrowserIte
   const [hideDone, setHideDone] = useState(false);
 
   const openIds = useMemo(() => new Set(open.map((s) => s.itemId)), [open]);
+  const anyDone = Object.keys(finished).length > 0;
   const shown = useMemo(() => {
     const q = query.trim().toLowerCase();
     return items.filter(
@@ -47,9 +49,9 @@ export function QuestionBrowser({ items, subjects, levels }: { items: BrowserIte
   }
 
   return (
-    <section className="space-y-4" aria-labelledby="questions">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <h2 id="questions" className="text-2xl">
+    <section id="questions" className="space-y-4 scroll-mt-20" aria-labelledby="questions-title">
+      <div className="flex items-end justify-between gap-3">
+        <h2 id="questions-title" className="text-xl sm:text-2xl">
           Choose a question
         </h2>
         <button type="button" className="btn btn-secondary btn-sm" onClick={surprise}>
@@ -57,51 +59,67 @@ export function QuestionBrowser({ items, subjects, levels }: { items: BrowserIte
         </button>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-2">
-        <label className="composer flex items-center gap-2 px-3 flex-1">
+      <div className="space-y-2">
+        <label className="composer flex items-center gap-2 px-4 h-12">
           <Icon.search size={18} className="text-muted shrink-0" />
           <span className="sr-only">Search questions</span>
           <input
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search a topic, e.g. percentages, erosion, binary"
-            className="w-full bg-transparent py-2.5 outline-none"
+            placeholder="Search a topic: percentages, erosion, binary…"
+            className="w-full bg-transparent outline-none text-base"
           />
         </label>
-        <select
-          value={level ?? ""}
-          onChange={(e) => setLevel(e.target.value || null)}
-          className="composer px-3 py-2.5 bg-paper text-ink"
-          aria-label="Form level"
-        >
-          <option value="">All forms</option>
-          {levels.map((l) => (
-            <option key={l} value={l}>
-              {l}
-            </option>
-          ))}
-        </select>
-      </div>
 
-      <div className="chip-scroll" role="group" aria-label="Subjects">
-        <button type="button" className="pill" aria-pressed={!subject} onClick={() => setSubject(null)}>
-          All subjects
-        </button>
-        {subjects.map((s) => (
-          <button key={s} type="button" className="pill" aria-pressed={subject === s} onClick={() => setSubject(subject === s ? null : s)}>
-            <SubjectIcon subject={s} size={15} /> {s}
+        {/* Phones: two plain selects, nothing hidden off-screen. */}
+        <div className="grid grid-cols-2 gap-2 md:hidden">
+          <select value={subject ?? ""} onChange={(e) => setSubject(e.target.value || null)} className="composer h-12 px-3 bg-paper text-ink" aria-label="Subject">
+            <option value="">All subjects</option>
+            {subjects.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+          <select value={level ?? ""} onChange={(e) => setLevel(e.target.value || null)} className="composer h-12 px-3 bg-paper text-ink" aria-label="Form">
+            <option value="">All forms</option>
+            {levels.map((l) => (
+              <option key={l} value={l}>
+                {l}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Larger screens: every subject visible as a pill, form as pills too. */}
+        <div className="hidden md:flex flex-wrap items-center gap-2" role="group" aria-label="Subjects and forms">
+          <button type="button" className="pill h-9" aria-pressed={!subject} onClick={() => setSubject(null)}>
+            All subjects
           </button>
-        ))}
-      </div>
+          {subjects.map((s) => (
+            <button key={s} type="button" className="pill h-9" aria-pressed={subject === s} onClick={() => setSubject(subject === s ? null : s)}>
+              <SubjectIcon subject={s} size={15} /> {s}
+            </button>
+          ))}
+          <span className="mx-1 h-6 w-px bg-paper-3" aria-hidden="true" />
+          {levels.map((l) => (
+            <button key={l} type="button" className="pill h-9" aria-pressed={level === l} onClick={() => setLevel(level === l ? null : l)}>
+              {l}
+            </button>
+          ))}
+        </div>
 
-      <label className="inline-flex items-center gap-2 text-sm text-text-2 cursor-pointer">
-        <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} className="h-4 w-4 accent-[var(--st-navy)]" />
-        Hide questions I have finished
-      </label>
+        {anyDone && (
+          <label className="inline-flex items-center gap-2 text-sm text-text-2 cursor-pointer min-h-11">
+            <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} className="h-4 w-4 accent-[var(--st-navy)]" />
+            Hide questions I have finished
+          </label>
+        )}
+      </div>
 
       {shown.length === 0 ? (
-        <div className="card p-6 text-center space-y-2">
+        <div className="card p-6 text-center space-y-3">
           <p className="font-display font-semibold">No questions match.</p>
           <button
             type="button"
@@ -117,37 +135,39 @@ export function QuestionBrowser({ items, subjects, levels }: { items: BrowserIte
           </button>
         </div>
       ) : (
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {shown.map((i) => {
             const done = finished[i.id];
             const going = !done && openIds.has(i.id);
             return (
               <li key={i.id}>
-                <Link href={`/tutor/${i.id}`} className="card card-link flex flex-col gap-2 p-4 no-underline text-ink h-full">
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-paper-2 text-navy shrink-0">
-                      <SubjectIcon subject={i.subject} size={18} />
+                <Link href={`/tutor/${i.id}`} className="card card-link flex flex-col justify-between p-4 no-underline text-ink h-full sm:min-h-[200px] rounded-2xl">
+                  <div className="grid grid-cols-[minmax(0,1fr)_72px] md:grid-cols-[minmax(0,1fr)_88px] gap-3">
+                    <div className="min-w-0">
+                      <p className="eyebrow text-[10px]! text-muted! truncate">
+                        {i.subject} · {i.level}
+                      </p>
+                      <p className="font-display font-semibold text-[17px] leading-[22px] text-navy mt-1">{i.topic}</p>
+                      <p className="mt-2 line-clamp-2 text-[13px] leading-5 text-text-2" dangerouslySetInnerHTML={{ __html: i.questionHtml }} />
+                    </div>
+                    <span className="art-tile rounded-xl overflow-hidden h-[72px] w-[72px] md:h-[88px] md:w-[88px]">
+                      <img src={subjectArt(i.subject)} alt="" width={88} height={88} className="h-full w-full object-contain" loading="lazy" decoding="async" />
+                    </span>
+                  </div>
+                  <div className="mt-4 flex items-center justify-between gap-2">
+                    <span className="text-xs text-muted">
+                      {done ? `${done.points}/${done.needed} points${done.withHelp ? " · with help" : ""}` : `${i.marks} marks`}
                     </span>
                     {done ? (
                       <span className="status status-done inline-flex items-center gap-1">
-                        <Icon.check size={12} /> {done.withHelp ? "Done with help" : "Done"}
+                        <Icon.check size={12} /> Done
                       </span>
-                    ) : going ? (
-                      <span className="status status-going">In progress</span>
                     ) : (
-                      <span className="status">New</span>
+                      <span className="text-[13px] font-semibold text-navy inline-flex items-center gap-1">
+                        {going ? "Continue" : "Start question"} <Icon.arrowRight size={14} />
+                      </span>
                     )}
                   </div>
-                  <div>
-                    <p className="eyebrow">
-                      {i.subject} · {i.level}
-                    </p>
-                    <p className="font-display font-semibold mt-0.5">{i.topic}</p>
-                  </div>
-                  <p className="text-sm text-text-2 line-clamp-2" dangerouslySetInnerHTML={{ __html: i.questionHtml }} />
-                  <p className="text-xs text-muted mt-auto">
-                    {i.marks} marks{done ? ` · ${done.points}/${done.needed} points, ${done.hintsUsed} ${done.hintsUsed === 1 ? "hint" : "hints"}` : ""}
-                  </p>
                 </Link>
               </li>
             );

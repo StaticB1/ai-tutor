@@ -83,6 +83,10 @@ Across 165 replies the judge rated none as harsh. It flagged two replies as leak
 
 Items are in [`src/content/items.ts`](src/content/items.ts). Each has the question, its marking points, the worked solution, known mistakes with a nudge for each, a hint ladder, and, where there is one, a final answer for the code check. The questions here are original samples written for this demo. They are not taken from ZIMSEC or Cambridge papers, and a school's own item bank belongs in its own system.
 
+## Illustrations
+
+The hero, subject and finish illustrations in `public/illustrations/` were made for this project with ChatGPT's image tool, in the Statotech Systems palette, and saved as small WebP files (about 11 KB per subject, under 90 KB for the hero). They are covered by this repository's licence.
+
 ## Limits
 
 - English only. Shona and Ndebele are not supported yet.

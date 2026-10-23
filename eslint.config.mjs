@@ -5,6 +5,8 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  // Illustrations are pre-sized WebP files in public/, served as-is so phones get exactly the bytes we chose.
+  { rules: { "@next/next/no-img-element": "off" } },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

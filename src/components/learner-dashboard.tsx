@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Icon, SubjectIcon } from "./icons";
+import { Icon } from "./icons";
 import { store, useStore } from "@/lib/client/store";
+import { subjectArt } from "@/lib/art";
 
 export interface ItemMeta {
   id: string;
@@ -12,8 +13,8 @@ export interface ItemMeta {
 
 const TIPS = [
   { icon: Icon.pen, title: "Answer in your own words", text: "Type your working, a step, or what you think. Half an idea is fine." },
-  { icon: Icon.bulb, title: "Stuck? Ask for a hint", text: "Hints come one at a time. After a few tries you get one worked step." },
-  { icon: Icon.trophy, title: "Earn every point", text: "Each mark in the mark scheme is a point. Get them all and the full solution opens." },
+  { icon: Icon.bulb, title: "Stuck? Ask for a hint", text: "Hints come one at a time, then worked steps. After those, the full answer opens." },
+  { icon: Icon.trophy, title: "Earn every point", text: "Each mark in the question is a point. Get them all and the full working opens." },
 ];
 
 export function LearnerDashboard({ items }: { items: ItemMeta[] }) {
@@ -21,89 +22,83 @@ export function LearnerDashboard({ items }: { items: ItemMeta[] }) {
   const finished = useStore(store.finished);
   const open = useStore(store.openSessions);
   const streak = useStore(store.streak);
-  if (!prefs || !finished || !open || streak === null) return <div className="min-h-[1px]" />;
+  if (!prefs || !finished || !open || streak === null) return <div className="min-h-[56px]" />;
 
   const done = Object.values(finished);
   const points = done.reduce((a, f) => a + f.points, 0);
   const latest = open.find((s) => items.some((i) => i.id === s.itemId));
   const latestItem = latest ? items.find((i) => i.id === latest.itemId) : undefined;
+  const started = done.length > 0 || open.length > 0;
 
   return (
-    <div className="space-y-4">
-      {!prefs.welcomed && (
-        <section className="card p-5 space-y-4" aria-labelledby="welcome">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="eyebrow">First time here?</p>
-              <h2 id="welcome" className="text-xl mt-1">
-                How to use your tutor
-              </h2>
-            </div>
-            <button type="button" className="icon-btn" aria-label="Close tips" onClick={() => store.setPrefs({ welcomed: true })}>
-              <Icon.close size={18} />
-            </button>
-          </div>
-          <ol className="grid gap-3 sm:grid-cols-3">
-            {TIPS.map(({ icon: I, title, text }, n) => (
-              <li key={title} className="flex gap-3">
-                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-paper-2 text-navy">
-                  <I size={18} />
-                </span>
-                <div>
-                  <p className="font-medium">
-                    {n + 1}. {title}
-                  </p>
-                  <p className="text-sm text-text-2">{text}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-          <button type="button" className="btn btn-sm" onClick={() => store.setPrefs({ welcomed: true })}>
-            Got it
-          </button>
-        </section>
+    <div className="space-y-3">
+      {latest && latestItem && (
+        <Link href={`/tutor/${latestItem.id}`} className="card card-link p-3 sm:p-4 flex items-center gap-4 no-underline text-ink">
+          <span className="art-tile rounded-xl shrink-0 overflow-hidden">
+            <img src={subjectArt(latestItem.subject)} alt="" width={56} height={56} className="h-14 w-14" loading="lazy" />
+          </span>
+          <span className="flex-1 min-w-0">
+            <span className="eyebrow block">Continue where you left off</span>
+            <span className="font-display font-semibold block truncate">{latestItem.topic}</span>
+            <span className="text-sm text-text-2">
+              {latest.progress.met} of {latest.progress.needed} points so far
+            </span>
+          </span>
+          <span className="btn btn-sm hidden sm:inline-flex">
+            Continue <Icon.arrowRight size={15} />
+          </span>
+          <Icon.arrowRight size={20} className="text-navy shrink-0 sm:hidden" />
+        </Link>
       )}
 
-      <div className="grid gap-3 sm:grid-cols-[1.4fr_1fr]">
-        {latest && latestItem ? (
-          <Link href={`/tutor/${latestItem.id}`} className="card card-link p-4 flex items-center gap-4 no-underline text-ink">
-            <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-navy text-paper">
-              <SubjectIcon subject={latestItem.subject} size={20} />
-            </span>
-            <span className="flex-1 min-w-0">
-              <span className="eyebrow block">Continue where you left off</span>
-              <span className="font-display font-semibold block truncate">{latestItem.topic}</span>
-              <span className="text-sm text-text-2">
-                {latest.progress.met} of {latest.progress.needed} points so far
-              </span>
-            </span>
-            <Icon.arrowRight size={20} className="text-navy shrink-0" />
-          </Link>
-        ) : (
-          <div className="card p-4 flex items-center gap-4">
-            <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-paper-2 text-navy">
-              <Icon.book size={20} />
-            </span>
-            <span>
-              <span className="font-display font-semibold block">{done.length ? "Ready for the next one?" : "Pick your first question below"}</span>
-              <span className="text-sm text-text-2">Your progress is saved on this device.</span>
-            </span>
-          </div>
-        )}
-        <dl className="card p-4 grid grid-cols-3 gap-2 text-center">
+      {started ? (
+        <dl className="grid grid-cols-3 gap-2">
           {[
             { label: "Questions done", value: done.length, icon: Icon.check },
             { label: "Points earned", value: points, icon: Icon.trophy },
             { label: streak === 1 ? "Day in a row" : "Days in a row", value: streak, icon: Icon.flame },
           ].map(({ label, value, icon: I }) => (
-            <div key={label} className="flex flex-col items-center gap-0.5">
-              <I size={16} className="text-navy" />
-              <dd className="font-display text-2xl font-semibold leading-none mt-1">{value}</dd>
-              <dt className="text-xs text-text-2 leading-tight">{label}</dt>
+            <div key={label} className="rounded-xl bg-paper-2 p-3 flex items-center gap-3">
+              <I size={18} className="text-navy shrink-0 hidden sm:block" />
+              <div>
+                <dd className="font-display text-2xl font-semibold leading-7 tabular-nums text-navy">{value}</dd>
+                <dt className="text-[11px] leading-[15px] text-muted">{label}</dt>
+              </div>
             </div>
           ))}
         </dl>
-      </div>
+      ) : (
+        <div className="rounded-2xl bg-paper-2 px-4 py-3 min-h-[56px] flex items-center justify-between gap-3">
+          <p className="text-sm text-text-2 flex items-center gap-2">
+            <Icon.flame size={16} className="text-navy shrink-0" /> Your progress starts with your first question.
+          </p>
+          <Link href="/progress" className="text-sm font-medium whitespace-nowrap">
+            My progress
+          </Link>
+        </div>
+      )}
+
+      <details className="group rounded-2xl border border-paper-3">
+        <summary className="cursor-pointer list-none flex items-center justify-between gap-3 px-4 h-11 text-sm font-medium text-navy">
+          <span className="inline-flex items-center gap-2">
+            <Icon.info size={16} /> New here? How to use your tutor
+          </span>
+          <Icon.chevronDown size={16} className="transition-transform group-open:rotate-180" />
+        </summary>
+        <ol className="grid gap-4 sm:grid-cols-3 px-4 pb-4 pt-1">
+          {TIPS.map(({ icon: I, title, text }) => (
+            <li key={title} className="flex gap-3">
+              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-paper-2 text-navy">
+                <I size={18} />
+              </span>
+              <div>
+                <p className="font-medium text-sm">{title}</p>
+                <p className="text-sm text-text-2">{text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </details>
     </div>
   );
 }

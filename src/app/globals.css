@@ -41,6 +41,8 @@
 /* Larger text, for younger learners and small screens. */
 html[data-text="large"] { font-size: 112.5%; }
 
+/* Element defaults sit in the base layer so component classes (.btn on an <a>) win over them. */
+@layer base {
 body {
   background: var(--st-paper);
   color: var(--st-ink);
@@ -59,6 +61,8 @@ a { color: var(--st-navy); }
 a:hover { color: var(--st-navy-hi); }
 
 :focus-visible { outline: 2px solid var(--st-navy); outline-offset: 2px; }
+}
+
 /* The composer draws its own focus ring around the whole box. */
 .composer textarea:focus-visible, .composer input:focus-visible { outline: none; }
 [data-theme="dark"] .meter > span:not(.on) { background: rgba(255, 255, 255, 0.12); } /* website dark --rule-strong is 0.20; 0.12 reads as "empty" */
@@ -89,6 +93,9 @@ a:hover { color: var(--st-navy-hi); }
 .icon-btn:hover { background: var(--st-paper-2); color: var(--st-ink); }
 .icon-btn[aria-pressed="true"] { color: var(--st-navy); border-color: var(--st-paper-3); }
 
+/* Illustrations are drawn on a light ground; the tile stays light (paper-2) in dark mode so they keep their colours. */
+.art-tile { background: #F7F8FA; }
+[data-theme="dark"] .art-tile { background: #EFF1F5; }
 .card { border: 1px solid var(--st-paper-3); border-radius: 12px; background: var(--st-paper); }
 [data-theme="dark"] .card { background: #14181F; border-color: rgba(255, 255, 255, 0.09); } /* website dark --s-card */
 .card-link { transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease; }
@@ -132,7 +139,7 @@ a:hover { color: var(--st-navy-hi); }
 .meter > span.pop { animation: pop 600ms ease-out; }
 
 .toast {
-  position: fixed; left: 50%; top: 4.5rem; transform: translateX(-50%); z-index: 50;
+  position: fixed; left: 50%; top: 7.5rem; transform: translateX(-50%); z-index: 50;
   background: var(--st-ink); color: var(--st-paper); border-radius: 9999px; padding: 0.5rem 1rem; font-weight: 600;
   box-shadow: 0 8px 24px rgba(10, 12, 16, 0.2); animation: toast 2.2s ease-out both;
 }
@@ -167,6 +174,8 @@ dialog.sheet::backdrop { background: rgba(10, 12, 16, 0.45); }
 @keyframes pop { 0% { transform: scaleY(1); } 40% { transform: scaleY(2.2); } 100% { transform: scaleY(1); } }
 @keyframes toast { 0% { opacity: 0; transform: translate(-50%, -10px); } 12%, 80% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -6px); } }
 @keyframes fall { to { transform: translateY(105vh) rotate(540deg); opacity: 0.6; } }
+
+@media (min-width: 1024px) { .toast { top: 4.5rem; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }

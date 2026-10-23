@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Composer, type ComposerHandle } from "./composer";
-import { Icon, SubjectIcon } from "./icons";
+import { Icon } from "./icons";
+import { subjectArt } from "@/lib/art";
 import { TeacherReport } from "./teacher-report";
 import { store, useStore, type SavedLine, type SavedSession } from "@/lib/client/store";
 import { speak, speechAvailable, stopSpeaking } from "@/lib/client/speech";
@@ -169,8 +170,8 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
   const learnerCount = lines.filter((l) => l.role === "learner").length;
   const quickReplies = useMemo(() => {
     if (solution) return [];
-    if (learnerCount === 0) return ["Where do I start?", "Explain the question in simpler words", "I'm stuck"];
-    return ["I'm stuck", "Check my working so far", "What does that mean?", "Explain it another way"];
+    if (learnerCount === 0) return ["Where do I start?", "Give me a hint", "Explain the question"];
+    return ["Give me a hint", "Check my step", "Explain it another way"];
   }, [solution, learnerCount]);
   const sendLearner = (t: string) => send(t);
 
@@ -188,17 +189,40 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
   }, [toast]);
 
   return (
-    <div className="grid gap-6 grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start">
+    <>
+    {/* Phones: once the chat starts, a slim bar keeps the topic and points in view. */}
+    {learnerCount > 0 && (
+      <div className="lg:hidden sticky top-14 z-20 -mx-4 px-4 py-2 bg-paper/95 backdrop-blur border-b border-paper-3 flex items-center gap-3 no-print">
+        <img src={subjectArt(item.subject)} alt="" width={32} height={32} className="h-8 w-8 rounded-lg art-tile" />
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold truncate">{item.topic}</p>
+          <div className="meter mt-1" aria-hidden="true">
+            {Array.from({ length: progress.needed }, (_, n) => (
+              <span key={n} className={n < progress.met ? "on" : ""} style={{ height: 5 }} />
+            ))}
+          </div>
+        </div>
+        <button
+          type="button"
+          className="btn btn-secondary btn-sm"
+          onClick={() => {
+            setQuestionOpen(true);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        >
+          Question
+        </button>
+      </div>
+    )}
+    <div className="grid gap-6 grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] items-start lg:h-[calc(100dvh-7.5rem)]">
       {/* Question */}
-      <aside className="lg:sticky lg:top-20 space-y-3">
+      <aside className="space-y-3 lg:h-full lg:overflow-y-auto lg:pr-1">
         <Link href="/" className="text-sm inline-flex items-center gap-1 no-print">
           <Icon.arrowLeft size={15} /> All questions
         </Link>
         <section className="card p-5 space-y-3" aria-labelledby="q-title">
           <div className="flex items-start gap-3">
-            <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy text-paper">
-              <SubjectIcon subject={item.subject} size={20} />
-            </span>
+            <img src={subjectArt(item.subject)} alt="" width={56} height={56} className="h-14 w-14 shrink-0 rounded-xl art-tile" />
             <div className="flex-1 min-w-0">
               <p className="eyebrow">
                 {item.subject} · {item.level}
@@ -224,7 +248,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
             </button>
           )}
           <div id="q-body" className={`${questionOpen ? "block" : "hidden"} lg:block space-y-3`}>
-            <div className="question text-lg" dangerouslySetInnerHTML={{ __html: questionHtml }} />
+            <div className="question text-lg sm:text-xl leading-relaxed" dangerouslySetInnerHTML={{ __html: questionHtml }} />
             <p className="text-sm text-text-2">{item.marks} marks</p>
           </div>
 
@@ -242,7 +266,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
             </div>
             {!solution && helpLeft !== null && helpLeft > 0 && learnerCount > 0 && (
               <p className="text-xs text-muted">
-                Stuck? The full answer opens after {helpLeft} more {helpLeft === 1 ? "hint or step" : "hints or steps"}. Tap &ldquo;I&apos;m stuck&rdquo; to get them.
+                {helpLeft} more {helpLeft === 1 ? "hint or step" : "hints or steps"} before the full answer opens.
               </p>
             )}
             <div className="meter" role="progressbar" aria-valuemin={0} aria-valuemax={progress.needed} aria-valuenow={progress.met} aria-label="Points earned">
@@ -264,9 +288,10 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
       </aside>
 
       {/* Chat */}
-      <section className="flex flex-col gap-4 min-h-[60vh]" aria-label="Chat with your tutor">
-        <div className="space-y-3" aria-live="polite" aria-relevant="additions">
-          <TutorBubble canSpeak={canSpeak} n={-1} text="Hello. Have a go at the question, or tell me where you would start. I will help you get there, but I will not give you the answer." speaking={speaking} onRead={read} />
+      <section className="flex flex-col min-h-[60vh] lg:h-full lg:min-h-0 rounded-2xl lg:border lg:border-paper-3" aria-label="Chat with your tutor">
+        <div className="flex-1 lg:min-h-0 lg:overflow-y-auto lg:px-5 lg:pt-5 pb-4 space-y-4">
+        <div className="space-y-4" aria-live="polite" aria-relevant="additions">
+          <TutorBubble canSpeak={canSpeak} n={-1} text="Hello. Have a go at the question, or tell me where you would start. I'll help you get there with questions and hints. If you get really stuck, the full answer opens once you've tried every hint." speaking={speaking} onRead={read} />
           {lines.map((l, n) =>
             l.role === "tutor" ? (
               <TutorBubble canSpeak={canSpeak} key={n} n={n} text={l.text} html={l.html} speaking={speaking} onRead={read} />
@@ -285,7 +310,6 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
               </span>
             </div>
           )}
-          <div ref={endRef} className="scroll-mb-64" />
         </div>
 
         {errorText && (
@@ -310,8 +334,11 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
             onReport={() => setReportOpen(true)}
             onRestart={restart}
           />
-        ) : (
-          <div className="sticky bottom-0 bg-paper pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] no-print">
+        ) : null}
+        <div ref={endRef} className="scroll-mb-64 lg:scroll-mb-4" />
+        </div>
+        {!solution && (
+          <div className="sticky bottom-0 lg:static bg-paper pt-2 lg:px-5 lg:pt-3 lg:border-t lg:border-paper-3 lg:rounded-b-2xl pb-[max(0.75rem,env(safe-area-inset-bottom))] no-print">
             {revealable && (
               <div className="card p-3 mb-2 flex flex-wrap items-center justify-between gap-2">
                 <p className="text-sm">You&apos;ve used every hint. Keep trying, or see the answer with the full working.</p>
@@ -321,14 +348,18 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
               </div>
             )}
             <Composer ref={composer} busy={busy} quickReplies={quickReplies} showKeypadByDefault={false} onSend={sendLearner} maxLength={MAX_CHARS} />
-            {NUMERIC_SUBJECTS.has(item.subject) && learnerCount === 0 && (
-              <p className="text-xs text-muted mt-2 flex items-center gap-1">
-                <Icon.keypad size={13} /> Tap the keypad button for maths symbols like × ÷ ² √
-              </p>
-            )}
+            <p className="text-xs text-muted mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span>You are talking to an AI. It can make mistakes.</span>
+              {NUMERIC_SUBJECTS.has(item.subject) && learnerCount === 0 && (
+                <span className="inline-flex items-center gap-1">
+                  <Icon.keypad size={13} /> Maths symbols: tap the keypad button
+                </span>
+              )}
+            </p>
           </div>
         )}
       </section>
+    </div>
 
       {toast && (
         <div key={toast.id} className="toast" role="status">
@@ -348,7 +379,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
         subtitle={`${item.subject} · ${item.level}`}
         />
       )}
-    </div>
+    </>
   );
 }
 
@@ -358,20 +389,20 @@ function TutorBubble({ n, text, html, speaking, onRead, canSpeak }: { n: number;
       <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy text-paper mt-0.5" aria-hidden="true">
         <Icon.bulb size={15} />
       </span>
-      <div className="bubble bubble-tutor flex-1 sm:flex-none">
+      <div className="bubble bubble-tutor max-w-[560px] text-[16px] leading-[25px]">
         {html ? <div dangerouslySetInnerHTML={{ __html: html }} /> : <p>{text}</p>}
-        {canSpeak && (
-          <button
-            type="button"
-            className="mt-1 -ml-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs text-text-2 hover:text-ink hover:bg-paper-3 no-print"
-            onClick={() => onRead(n, text)}
-            aria-label={speaking === n ? "Stop reading" : "Read aloud"}
-          >
-            {speaking === n ? <Icon.stop size={13} /> : <Icon.speaker size={13} />}
-            {speaking === n ? "Stop" : "Listen"}
-          </button>
-        )}
       </div>
+      {canSpeak && (
+        <button
+          type="button"
+          className={`icon-btn shrink-0 self-end no-print ${speaking === n ? "text-navy" : ""}`}
+          onClick={() => onRead(n, text)}
+          aria-label={speaking === n ? "Stop reading" : "Read aloud"}
+          title={speaking === n ? "Stop" : "Listen"}
+        >
+          {speaking === n ? <Icon.stop size={16} /> : <Icon.speaker size={16} />}
+        </button>
+      )}
     </div>
   );
 }
@@ -405,10 +436,14 @@ function Finished({
   return (
     <div className="space-y-4">
       <section className="card p-5 space-y-4 border-navy" aria-labelledby="done-title">
-        <div className="flex items-center gap-3">
-          <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-navy text-paper">
-            {revealed ? <Icon.bulb size={24} /> : <Icon.trophy size={24} />}
-          </span>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <img
+            src={revealed ? "/illustrations/finish-with-help.webp" : "/illustrations/finish-complete.webp"}
+            alt=""
+            width={180}
+            height={135}
+            className="w-[180px] h-auto rounded-xl art-tile self-center sm:self-auto"
+          />
           <div>
             <h2 id="done-title" className="text-2xl">
               {revealed ? "Done with help" : "Question complete"}

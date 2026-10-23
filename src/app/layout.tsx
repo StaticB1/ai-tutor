@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Inter_Tight } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 import { PREFS_BOOT_SCRIPT } from "@/lib/client/store";
 import "./globals.css";
 
@@ -34,19 +35,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <main id="main" className="mx-auto w-full max-w-6xl px-4 py-6 sm:py-8 flex-1">
           {children}
         </main>
-        <footer className="border-t border-paper-3 no-print">
-          <div className="mx-auto max-w-6xl px-4 py-5 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-muted max-w-md">
-              You are talking to an AI. It can make mistakes, so check with your teacher. We do not store your messages; your progress stays on this device.
-            </p>
-            <a href="https://statotec.com" aria-label="Built by Statotech Systems">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/built-by-statotech.svg" alt="Built by Statotech Systems" width={176} height={28} className="dark:hidden" />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/built-by-statotech-dark.svg" alt="Built by Statotech Systems" width={176} height={28} className="hidden dark:inline" />
-            </a>
-          </div>
-        </footer>
+        <SiteFooter />
       </body>
     </html>
   );
