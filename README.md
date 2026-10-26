@@ -41,6 +41,7 @@ reply + signed session state
 - **State is signed** (HMAC). Points earned, hints used and whether the solution is unlocked live in a token the server signs, so a learner cannot edit their way to the answer. The chat history the browser sends is used as context only; it never earns marks.
 - **The answer opens only after every hint.** Hints come first, then worked steps one at a time. Once all of them are used, a "Show me the answer" button appears; the server checks the signed state before it shows anything. The question then counts as "done with help".
 - **Guesses do not count.** "Is it 12 or 17?" earns nothing and gets no confirmation either way.
+- **Photos of working.** On a phone, a learner can photograph their working on paper. Nemotron 3.5 Super VL transcribes it exactly as written, mistakes included, and the text appears in the box for the learner to correct before sending; reading handwriting is where these models slip, so a person always confirms. The photo is used for that one call and not stored.
 - **Any subject.** A question carries its mark scheme. Maths answers are checked numerically; other subjects are marked point by point, as a mark scheme lists them.
 
 ## NVIDIA and Nebius
@@ -48,7 +49,7 @@ reply + signed session state
 | Role | Model on Nebius Token Factory |
 | --- | --- |
 | Tutor replies | `nvidia/Nemotron-3-Ultra-550b-a55b` |
-| Marking, leak check, safety screen, teacher summary | `nvidia/Nemotron-3.5-Super-VL` |
+| Marking, leak check, safety screen, teacher summary, reading photos of handwritten working | `nvidia/Nemotron-3.5-Super-VL` |
 
 Every call goes to Token Factory's OpenAI-compatible API with reasoning switched off (`chat_template_kwargs.enable_thinking=false`), which keeps a turn to about a second. Zero data retention is switched on for the account. Models are set by environment variables, so the same code runs against build.nvidia.com in development.
 

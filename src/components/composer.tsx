@@ -48,7 +48,9 @@ interface Props {
 export const Composer = forwardRef<ComposerHandle, Props>(function Composer({ busy, disabled, quickReplies, onSend, maxLength }, ref) {
   const [text, setText] = useState("");
   const [keypad, setKeypad] = useState(false);
+  const [photo, setPhoto] = useState<{ state: "reading" } | { state: "read" } | { state: "error"; message: string } | null>(null);
   const area = useRef<HTMLTextAreaElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
   const caret = useRef<number | null>(null);
 
   useImperativeHandle(ref, () => ({
@@ -88,6 +90,29 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer({ bu
     if (!t || busy || disabled) return;
     onSend(t);
     setText("");
+    setPhoto(null);
+  }
+
+  // Photo of handwritten working: shrink it on the phone, have the vision model read it, and put
+  // the reading in the box so the learner can fix anything misread before sending.
+  async function readPhoto(file: File) {
+    setPhoto({ state: "reading" });
+
+    try {
+      const image = await shrink(file);
+      const res = await fetch("/api/read-working", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ image }) });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error ?? "I couldn't read that photo. Please try again.");
+      const next = (text.trim() ? `${text.trim()}\n` : "") + data.text;
+      setText(next.slice(0, maxLength));
+      setPhoto({ state: "read" });
+
+      requestAnimationFrame(() => area.current?.focus());
+    } catch (e) {
+      setPhoto({ state: "error", message: e instanceof Error ? e.message : "I couldn't read that photo." });
+
+    }
   }
 
   const near = text.length > maxLength * 0.8;
@@ -139,6 +164,30 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer({ bu
               autoComplete="off"
               className="text-base px-4! sm:px-5!"
             />
+            <input
+              ref={fileInput}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="sr-only"
+              tabIndex={-1}
+              aria-hidden="true"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                e.target.value = "";
+                if (f) readPhoto(f);
+              }}
+            />
+            <button
+              type="button"
+              className="icon-btn my-1.5 ml-1.5 shrink-0 border! border-line! w-9! h-9! sm:w-10! sm:h-10!"
+              aria-label="Take a photo of your working"
+              title="Photo of your working"
+              onClick={() => fileInput.current?.click()}
+              disabled={disabled || busy || photo?.state === "reading"}
+            >
+              <Icon.camera size={18} />
+            </button>
             <button
               type="button"
               className="icon-btn m-1.5 shrink-0 border! border-line! w-9! h-9! sm:w-10! sm:h-10!"
@@ -151,6 +200,24 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer({ bu
               <Icon.keypad size={18} />
             </button>
           </div>
+          {photo && (
+            <p role="status" className={`mx-3 mb-2 rounded-xl px-3 py-2 text-sm ${photo.state === "error" ? "bg-paper-3 text-ink" : "bg-tint-1 text-navy"}`}>
+              {photo.state === "reading" ? (
+                <span className="inline-flex items-center gap-2">
+                  <span className="typing" aria-hidden="true">
+                    <span />
+                    <span />
+                    <span />
+                  </span>
+                  Reading your working…
+                </span>
+              ) : photo.state === "read" ? (
+                "Here's what I read from your photo. Fix anything I misread, then send."
+              ) : (
+                photo.message
+              )}
+            </p>
+          )}
           {keypad && !disabled && (
             <div className="flex flex-wrap gap-1.5 px-3 pb-3" role="group" aria-label="Maths symbols">
               {KEYS.map((k) => (
@@ -177,3 +244,19 @@ export const Composer = forwardRef<ComposerHandle, Props>(function Composer({ bu
     </div>
   );
 });
+
+/** Shrinks a photo to at most 1600 px on its long side as a JPEG, so it uploads quickly on slow data. */
+async function shrink(file: File): Promise<string> {
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext("2d")?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+  for (const q of [0.82, 0.7, 0.55]) {
+    const url = canvas.toDataURL("image/jpeg", q);
+    if (url.length < 1_400_000) return url;
+  }
+  throw new Error("That photo is too large. Try again a little further from the page.");
+}

@@ -66,6 +66,7 @@ export default function HowItWorks() {
           <li>Pages are built in advance and the maths is drawn on our server, so the phone downloads less.</li>
           <li>Large text, dark mode and reading aloud are in the settings at the top of every page.</li>
           <li>A maths keypad gives you × ÷ ² √ π and more without hunting on the keyboard.</li>
+          <li>Prefer paper? Take a photo of your working. Nemotron reads it into the box, and you fix anything it misread before you send.</li>
         </ul>
       </section>
 
@@ -75,6 +76,7 @@ export default function HowItWorks() {
           <li>You do not need an account. Your progress is saved in this browser only.</li>
           <li>We do not store your messages. They are sent to the AI models to get a reply, with data retention switched off.</li>
           <li>Reading aloud uses your device&apos;s own voice, so nothing extra is sent anywhere.</li>
+          <li>A photo of your working is read once to turn it into text, then thrown away. We do not keep it.</li>
         </ul>
       </section>
 
