@@ -49,6 +49,7 @@ export const Icon = {
   bulbRays: (p: P) => <Svg {...p}><path d="M9 18h6M10 21h4" /><path d="M12 6a5 5 0 0 0-3 9c.6.5 1 1.2 1 2h4c0-.8.4-1.5 1-2a5 5 0 0 0-3-9z" /><path d="M12 1.5v1.5M4.2 4.7l1.1 1.1M19.8 4.7l-1.1 1.1M1.5 11.5H3M21 11.5h1.5" /></Svg>,
   phone: (p: P) => <Svg {...p}><rect x="6" y="2" width="12" height="20" rx="2.5" /><path d="M11 18h2" /></Svg>,
   bookOpen: (p: P) => <Svg {...p}><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4H9a3 3 0 0 1 3 3v13a2.5 2.5 0 0 0-2.5-2.5H3.5A1.5 1.5 0 0 1 2 16z" /><path d="M22 5.5A1.5 1.5 0 0 0 20.5 4H15a3 3 0 0 0-3 3v13a2.5 2.5 0 0 1 2.5-2.5h6a1.5 1.5 0 0 0 1.5-1.5z" /></Svg>,
+  mic: (p: P) => <Svg {...p}><rect x="9" y="2" width="6" height="12" rx="3" /><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8" /></Svg>,
   camera: (p: P) => <Svg {...p}><path d="M14.5 4h-5L7.5 6.5H4A2 2 0 0 0 2 8.5v10A2 2 0 0 0 4 20.5h16a2 2 0 0 0 2-2v-10a2 2 0 0 0-2-2h-3.5z" /><circle cx="12" cy="13" r="3.5" /></Svg>,
   sparkle: (p: P) => <Svg {...p}><path d="M12 3l1.9 5.6L19.5 10.5l-5.6 1.9L12 18l-1.9-5.6L4.5 10.5l5.6-1.9z" fill="currentColor" stroke="none" /></Svg>,
   flag: (p: P) => <Svg {...p}><path d="M4 22V4M4 4h12l-2 4 2 4H4" /></Svg>,

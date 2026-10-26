@@ -1,40 +1,12 @@
 "use client";
 
+import { mathsToWords } from "@/lib/speech-text";
+
 // Read-aloud with the device's own voice (Web Speech API): free, offline on most phones, and
 // nothing leaves the device. Maths is turned into words so "$3x - 12$" is read as "3x minus 12".
 
 export function speechAvailable(): boolean {
   return typeof window !== "undefined" && "speechSynthesis" in window;
-}
-
-export function mathsToWords(text: string): string {
-  return text
-    .replace(/\\\$/g, " dollars ")
-    .replace(/\$\$?([^$]+)\$\$?/g, (_, m: string) => ` ${latexWords(m)} `)
-    .replace(/\*\*/g, "")
-    .replace(/US\$/g, "US dollars ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function latexWords(m: string): string {
-  return m
-    .replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, "$1 over $2")
-    .replace(/\\sqrt\{([^}]*)\}/g, "the square root of $1")
-    .replace(/\^2/g, " squared")
-    .replace(/\^3/g, " cubed")
-    .replace(/\^\{?([^} ]+)\}?/g, " to the power $1")
-    .replace(/\\times/g, " times ")
-    .replace(/\\div/g, " divided by ")
-    .replace(/\\pi/g, " pi ")
-    .replace(/\\(le|leq)/g, " is less than or equal to ")
-    .replace(/\\(ge|geq)/g, " is greater than or equal to ")
-    .replace(/\\[a-zA-Z]+/g, " ")
-    .replace(/[{}]/g, "")
-    .replace(/\s-\s|−/g, " minus ")
-    .replace(/(\d)\s*-\s*(\d)/g, "$1 minus $2")
-    .replace(/\+/g, " plus ")
-    .replace(/=/g, " equals ");
 }
 
 export function speak(text: string, onEnd?: () => void) {
@@ -52,6 +24,39 @@ export function speak(text: string, onEnd?: () => void) {
   synth.speak(u);
 }
 
+let current: HTMLAudioElement | null = null;
+
+/**
+ * Speaks and resolves when finished. Tries the tutor's own voice (Cartesia, when switched on);
+ * if the server answers without audio, uses the phone's voice instead.
+ */
+export async function speakAsync(text: string): Promise<void> {
+  try {
+    const res = await fetch("/api/speak", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+    if (res.status === 200) {
+      const url = URL.createObjectURL(await res.blob());
+      await new Promise<void>((resolve) => {
+        current = new Audio(url);
+        // ended, failed or paused by an interruption: all count as finished
+        current.onended = current.onerror = current.onpause = () => {
+          URL.revokeObjectURL(url);
+          resolve();
+        };
+        current.play().catch(() => resolve());
+      });
+      return;
+    }
+  } catch {
+    // fall through to the phone voice
+  }
+  await new Promise<void>((resolve) => {
+    if (!speechAvailable()) return resolve();
+    speak(text, () => resolve());
+  });
+}
+
 export function stopSpeaking() {
+  current?.pause();
+  current = null;
   if (speechAvailable()) window.speechSynthesis.cancel();
 }

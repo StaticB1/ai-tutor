@@ -5,6 +5,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Composer, type ComposerHandle } from "./composer";
 import { Icon } from "./icons";
 import { TeacherReport } from "./teacher-report";
+import { TalkMode } from "./talk-mode";
+import { listeningAvailable } from "@/lib/client/listen";
 import { store, useStore, type SavedLine, type SavedSession } from "@/lib/client/store";
 import { speak, speechAvailable, stopSpeaking } from "@/lib/client/speech";
 import type { PublicItem } from "@/lib/tutor/types";
@@ -55,6 +57,8 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
   const [speaking, setSpeaking] = useState<number | null>(null);
   const [questionOpen, setQuestionOpen] = useState(!saved?.lines.length);
   const [celebrate, setCelebrate] = useState(false);
+  const [talking, setTalking] = useState(false);
+  const canTalk = canSpeak && listeningAvailable();
   const prefs = useStore(store.prefs);
   const finished = useStore(store.finished);
   const composer = useRef<ComposerHandle>(null);
@@ -122,7 +126,8 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
       setRevealable(Boolean(data.canReveal));
       if (data.revealed) setRevealed(true);
       setLines((l) => [...l, { role: "tutor" as const, text: data.reply, html: data.replyHtml, gain: gained > 0 ? gained : undefined }]);
-      if (prefs?.readAloud && speechAvailable()) {
+      // In talk mode the talk panel speaks every reply itself.
+      if (prefs?.readAloud && speechAvailable() && !talking) {
         // the learner's line went in at index lines.length, so the reply lands one after it
         const at = lines.length + 1;
         setSpeaking(at);
@@ -355,7 +360,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
             <div ref={endRef} className="scroll-mb-72 lg:scroll-mb-4" />
           </div>
 
-          {!solution && (
+          {(!solution || talking) && (
             <div className="sticky bottom-0 lg:static bg-paper px-4 sm:px-7 pt-4 border-t border-line lg:border-t-0 pb-[max(1rem,env(safe-area-inset-bottom))] lg:pb-7 no-print [[data-theme=dark]_&]:bg-[#14181F]">
               {revealable && (
                 <div className="panel-tint p-3.5 mb-3 flex flex-wrap items-center justify-between gap-2">
@@ -365,7 +370,27 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
                   </button>
                 </div>
               )}
-              <Composer ref={composer} busy={busy} quickReplies={quickReplies} onSend={sendLearner} maxLength={MAX_CHARS} />
+              {talking ? (
+                <TalkMode
+                  reply={(() => {
+                    for (let i = lines.length - 1; i >= 0; i--) if (lines[i].role === "tutor") return { index: i, text: lines[i].text };
+                    return null;
+                  })()}
+                  busy={busy}
+                  finished={Boolean(solution)}
+                  onSay={sendLearner}
+                  onClose={() => setTalking(false)}
+                />
+              ) : (
+                <>
+                  {canTalk && (
+                    <button type="button" className="btn w-full mb-3 h-12!" onClick={() => setTalking(true)} disabled={busy}>
+                      <Icon.mic size={18} /> Talk to your tutor
+                    </button>
+                  )}
+                  <Composer ref={composer} busy={busy} quickReplies={quickReplies} onSend={sendLearner} maxLength={MAX_CHARS} />
+                </>
+              )}
             </div>
           )}
         </section>

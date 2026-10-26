@@ -42,6 +42,7 @@ reply + signed session state
 - **The answer opens only after every hint.** Hints come first, then worked steps one at a time. Once all of them are used, a "Show me the answer" button appears; the server checks the signed state before it shows anything. The question then counts as "done with help".
 - **Guesses do not count.** "Is it 12 or 17?" earns nothing and gets no confirmation either way.
 - **Photos of working.** On a phone, a learner can photograph their working on paper. Nemotron 3.5 Super VL transcribes it exactly as written, mistakes included, and the text appears in the box for the learner to correct before sending; reading handwriting is where these models slip, so a person always confirms. The photo is used for that one call and not stored.
+- **Talk mode.** "Talk to your tutor" turns the chat into a spoken conversation: the learner speaks, the tutor answers out loud, then listens again, hands-free, until the question is done. Listening uses the browser's speech recognition and the voice is the phone's own, so it costs nothing; set `TUTOR_VOICE=cartesia` with a Cartesia key and the tutor speaks in a natural Cartesia Sonic voice instead (capped by `TUTOR_VOICE_CHARS_PER_DAY`, falling back to the phone's voice). Talk mode sends exactly the same text turns, so every rule above still applies.
 - **Any subject.** A question carries its mark scheme. Maths answers are checked numerically; other subjects are marked point by point, as a mark scheme lists them.
 
 ## NVIDIA and Nebius
