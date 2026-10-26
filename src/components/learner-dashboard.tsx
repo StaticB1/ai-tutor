@@ -68,14 +68,14 @@ export function LearnerDashboard({ items }: { items: ItemMeta[] }) {
           ))}
         </dl>
       ) : (
-        <div className="rounded-[20px] bg-paper-2 px-6 py-4 min-h-[64px] flex items-center justify-between gap-3">
-          <p className="text-[1rem] text-text-2 flex items-center gap-2.5">
+        <Link href="/progress" className="group rounded-[20px] bg-paper-2 hover:bg-tint-1 transition-colors px-6 py-4 min-h-[64px] flex items-center justify-between gap-3 no-underline">
+          <span className="text-[1rem] text-text-2 flex items-center gap-2.5">
             <Icon.flame size={16} className="text-navy shrink-0" /> Your progress starts with your first question.
-          </p>
-          <Link href="/progress" className="font-semibold whitespace-nowrap">
-            My progress
-          </Link>
-        </div>
+          </span>
+          <span className="font-semibold whitespace-nowrap text-navy inline-flex items-center gap-1.5">
+            My progress <Icon.arrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
+          </span>
+        </Link>
       )}
 
       <details className="group rounded-[20px] border border-line bg-paper">

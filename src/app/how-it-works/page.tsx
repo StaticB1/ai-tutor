@@ -6,21 +6,25 @@ export const metadata: Metadata = { title: "How it works" };
 
 const STEPS = [
   {
+    id: "safety",
     icon: Icon.shield,
     title: "Safety first",
     text: "Every message is screened by a Nemotron safety check before the tutor sees it. If you write about being hurt or wanting to hurt yourself, you get a fixed message pointing you to a trusted adult and to Childline on 116, never a made-up reply.",
   },
   {
+    id: "marking",
     icon: Icon.clipboard,
     title: "Marked against the mark scheme",
     text: "Each question has a hidden mark scheme. Nemotron checks your message against it, one point at a time, and notices common mistakes. Final answers in maths are checked by code, not by the AI.",
   },
   {
+    id: "rules",
     icon: Icon.bulb,
-    title: "The rules live in code",
-    text: "The program, not the AI, decides what happens next: ask you a question, give the next hint, show one worked step, or say no to giving the answer. You cannot talk it out of these rules.",
+    title: "Hints first, answer last",
+    text: "The program, not the AI, decides what happens next: ask you a question, give the next hint, or show one worked step. The full answer only opens once you have used every hint and step, and you cannot talk the tutor out of that rule.",
   },
   {
+    id: "checked",
     icon: Icon.check,
     title: "Checked before you see it",
     text: "Each reply is checked for the answer and for points you have not reached yet. If it gives too much away, it is rewritten, or replaced by a hint written in advance.",
@@ -41,8 +45,8 @@ export default function HowItWorks() {
       </section>
 
       <ol className="space-y-3">
-        {STEPS.map(({ icon: I, title, text }, n) => (
-          <li key={title} className="card p-5 flex gap-4">
+        {STEPS.map(({ id, icon: I, title, text }, n) => (
+          <li key={title} id={id} className="card p-5 flex gap-4 scroll-mt-28 target:ring-2 target:ring-navy/40">
             <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-paper-2 text-navy">
               <I size={20} />
             </span>
@@ -54,6 +58,16 @@ export default function HowItWorks() {
           </li>
         ))}
       </ol>
+
+      <section id="phones" className="space-y-3 scroll-mt-28">
+        <h2 className="text-2xl">Made for phones</h2>
+        <ul className="list-disc pl-5 space-y-1 text-text-2">
+          <li>It runs in the phone&apos;s browser. There is no app to install and no account to create.</li>
+          <li>Pages are built in advance and the maths is drawn on our server, so the phone downloads less.</li>
+          <li>Large text, dark mode and reading aloud are in the settings at the top of every page.</li>
+          <li>A maths keypad gives you × ÷ ² √ π and more without hunting on the keyboard.</li>
+        </ul>
+      </section>
 
       <section className="space-y-3">
         <h2 className="text-2xl">Your privacy</h2>

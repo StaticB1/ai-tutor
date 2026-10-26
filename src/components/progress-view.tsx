@@ -24,20 +24,20 @@ export function ProgressView({ items, subjects }: { items: Meta[]; subjects: str
 
   return (
     <div className="space-y-8">
-      <dl className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Questions done", value: `${done.length} of ${items.length}`, icon: Icon.check },
-          { label: "Points earned", value: points, icon: Icon.trophy },
-          { label: "Solved without a hint", value: noHint, icon: Icon.bulb },
-          { label: streak === 1 ? "Day in a row" : "Days in a row", value: streak, icon: Icon.flame },
-        ].map(({ label, value, icon: I }) => (
-          <div key={label} className="card p-4">
+          { label: "Questions done", value: `${done.length} of ${items.length}`, icon: Icon.check, href: "#history" },
+          { label: "Points earned", value: points, icon: Icon.trophy, href: "#history" },
+          { label: "Solved without a hint", value: noHint, icon: Icon.bulb, href: "#history" },
+          { label: streak === 1 ? "Day in a row" : "Days in a row", value: streak, icon: Icon.flame, href: "/#questions" },
+        ].map(({ label, value, icon: I, href }) => (
+          <Link key={label} href={href} className="card card-link p-4 no-underline text-ink block">
             <I size={18} className="text-navy" />
-            <dd className="font-display text-2xl font-semibold mt-2">{value}</dd>
-            <dt className="text-sm text-text-2">{label}</dt>
-          </div>
+            <span className="block font-display text-2xl font-semibold mt-2">{value}</span>
+            <span className="block text-sm text-text-2">{label}</span>
+          </Link>
         ))}
-      </dl>
+      </div>
 
       <section className="space-y-3" aria-labelledby="by-subject">
         <h2 id="by-subject" className="text-2xl">
@@ -50,7 +50,8 @@ export function ProgressView({ items, subjects }: { items: Meta[]; subjects: str
             const pct = all.length ? Math.round((got / all.length) * 100) : 0;
             const next = all.find((i) => !finished[i.id]);
             return (
-              <li key={s} className="card p-4 space-y-3">
+              <li key={s}>
+                <Link href={next ? `/tutor/${next.id}` : "/#questions"} className="card card-link p-4 space-y-3 block no-underline text-ink h-full">
                 <div className="flex items-center gap-3">
                   <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-paper-2 text-navy">
                     <SubjectIcon subject={s} size={18} />
@@ -62,9 +63,9 @@ export function ProgressView({ items, subjects }: { items: Meta[]; subjects: str
                     </p>
                   </div>
                   {next ? (
-                    <Link href={`/tutor/${next.id}`} className="btn btn-secondary btn-sm">
-                      {got ? "Next" : "Start"}
-                    </Link>
+                    <span className="btn btn-secondary btn-sm">
+                      {got ? "Next" : "Start"} <Icon.arrowRight size={15} />
+                    </span>
                   ) : (
                     <span className="status status-done">All done</span>
                   )}
@@ -72,6 +73,7 @@ export function ProgressView({ items, subjects }: { items: Meta[]; subjects: str
                 <div className="h-2 rounded-full bg-paper-3 overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${s} progress`}>
                   <div className="h-full bg-navy rounded-full transition-all" style={{ width: `${pct}%` }} />
                 </div>
+                </Link>
               </li>
             );
           })}
@@ -107,7 +109,7 @@ export function ProgressView({ items, subjects }: { items: Meta[]; subjects: str
       )}
 
       <section className="space-y-3" aria-labelledby="history">
-        <h2 id="history" className="text-2xl">
+        <h2 id="history" className="text-2xl scroll-mt-28">
           Finished questions
         </h2>
         {done.length === 0 ? (

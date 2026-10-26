@@ -8,9 +8,9 @@ import { LearnerDashboard } from "@/components/learner-dashboard";
 import { Icon } from "@/components/icons";
 
 const PROMISES = [
-  { icon: Icon.bookOpen, title: "Hints first, answer last", text: "Guidance one step at a time." },
-  { icon: Icon.clipboard, title: "Marked step by step", text: "See which marks you have earned." },
-  { icon: Icon.phone, title: "Works on any phone", text: "Light pages, no app to install." },
+  { icon: Icon.bookOpen, title: "Hints first, answer last", text: "Guidance one step at a time.", href: "/how-it-works#rules" },
+  { icon: Icon.clipboard, title: "Marked step by step", text: "See which marks you have earned.", href: "/how-it-works#marking" },
+  { icon: Icon.phone, title: "Works on any phone", text: "Light pages, no app to install.", href: "/how-it-works#phones" },
 ];
 
 export default function Home() {
@@ -77,15 +77,18 @@ export default function Home() {
 
       {/* Promises */}
       <section aria-label="What the tutor does" className="panel-tint grid grid-cols-1 sm:grid-cols-3 sm:divide-x divide-[color-mix(in_srgb,var(--st-navy)_14%,transparent)] px-2 py-4 sm:py-7 lg:-mx-4">
-        {PROMISES.map(({ icon: I, title, text }) => (
-          <div key={title} className="flex items-center gap-5 px-4 py-2 sm:px-8">
-            <span className="icon-circle h-14 w-14 sm:h-16 sm:w-16">
+        {PROMISES.map(({ icon: I, title, text, href }) => (
+          <div key={title} className="px-1.5 sm:px-3">
+          <Link href={href} className="group flex items-center gap-5 px-3 py-3 sm:px-5 no-underline rounded-[18px] transition-colors hover:bg-paper/70">
+            <span className="icon-circle h-14 w-14 sm:h-16 sm:w-16 transition-transform group-hover:scale-105">
               <I size={28} />
             </span>
-            <div>
-              <p className="font-display font-bold text-[1.15rem] text-navy tracking-[-0.02em]">{title}</p>
-              <p className="text-[0.98rem] text-text-2">{text}</p>
-            </div>
+            <span className="flex-1">
+              <span className="block font-display font-bold text-[1.15rem] text-navy tracking-[-0.02em]">{title}</span>
+              <span className="block text-[0.98rem] text-text-2">{text}</span>
+            </span>
+            <Icon.arrowRight size={18} className="text-navy opacity-0 -translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0 hidden sm:block" />
+          </Link>
           </div>
         ))}
       </section>
