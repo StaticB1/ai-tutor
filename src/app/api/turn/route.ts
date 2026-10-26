@@ -3,7 +3,7 @@ import { getItem } from "@/content/items";
 import { canReveal, helpLeft, MAX_LEARNER_CHARS, needed, revealTurn, takeTurn } from "@/lib/tutor/engine";
 import { callModel } from "@/lib/tutor/model";
 import { newState, open, seal } from "@/lib/tutor/state";
-import { allow, clientKey } from "@/lib/rate-limit";
+import { allow, allowToday, clientKey } from "@/lib/rate-limit";
 import { renderMaths } from "@/lib/render-maths";
 
 export const runtime = "nodejs";
@@ -24,6 +24,7 @@ const Body = z.object({
 export async function POST(req: Request) {
   if (process.env.TUTOR_DISABLED === "1") return Response.json({ error: "The tutor is resting. Please try again later." }, { status: 503 });
   if (!allow(clientKey(req))) return Response.json({ error: "That's a lot of messages. Take a short break and try again in a few minutes." }, { status: 429 });
+  if (!allowToday()) return Response.json({ error: "The tutor has had a very busy day. Please come back tomorrow." }, { status: 429 });
 
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return Response.json({ error: "Bad request" }, { status: 400 });
