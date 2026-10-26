@@ -378,6 +378,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
                   })()}
                   busy={busy}
                   finished={Boolean(solution)}
+                  maths={/math|physics|science|accounting/i.test(item.subject)}
                   onSay={sendLearner}
                   onClose={() => setTalking(false)}
                 />

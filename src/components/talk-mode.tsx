@@ -5,7 +5,10 @@ import { Icon } from "./icons";
 import { listenOnce, type Listener } from "@/lib/client/listen";
 import { speakAsync, stopSpeaking } from "@/lib/client/speech";
 
-type Phase = "listening" | "thinking" | "speaking" | "paused" | "done";
+type Phase = "listening" | "checking" | "thinking" | "speaking" | "paused" | "done";
+
+// On maths, what was heard waits this long on screen before it is sent, so a misheard number can be said again.
+const CHECK_MS = 4000;
 
 const ERRORS: Record<string, string> = {
   "not-allowed": "Allow the microphone in your browser to talk to the tutor.",
@@ -23,6 +26,7 @@ export function TalkMode({
   reply,
   busy,
   finished,
+  maths = false,
   onSay,
   onClose,
 }: {
@@ -30,6 +34,8 @@ export function TalkMode({
   reply: { index: number; text: string } | null;
   busy: boolean;
   finished: boolean;
+  /** write spoken maths as maths, and show it for a moment before sending */
+  maths?: boolean;
   onSay: (text: string) => void;
   onClose: () => void;
 }) {
@@ -39,6 +45,7 @@ export function TalkMode({
   const listener = useRef<Listener | null>(null);
   const spokenIndex = useRef<number | null>(reply?.index ?? null);
   const alive = useRef(true);
+  const checkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // The parent passes a new onSay function on every render; keep the latest in a ref so that
   // listening is never restarted (and the learner cut off) just because the page re-rendered.
   const sayRef = useRef(onSay);
@@ -46,17 +53,27 @@ export function TalkMode({
     sayRef.current = onSay;
   }, [onSay]);
 
+  const send = useCallback((t: string) => {
+    if (checkTimer.current) clearTimeout(checkTimer.current);
+    checkTimer.current = null;
+    setPhase("thinking");
+    sayRef.current(t);
+  }, []);
+
   const listen = useCallback(() => {
     if (!alive.current) return;
+    if (checkTimer.current) clearTimeout(checkTimer.current);
     setNote(null);
     setHeard("");
     setPhase("listening");
     listener.current = listenOnce({
+      maths,
       onInterim: (t) => setHeard(t),
       onFinal: (t) => {
         setHeard(t);
-        setPhase("thinking");
-        sayRef.current(t);
+        if (!maths) return send(t);
+        setPhase("checking");
+        checkTimer.current = setTimeout(() => send(t), CHECK_MS);
       },
       onError: (code) => {
         setPhase("paused");
@@ -67,7 +84,7 @@ export function TalkMode({
       setPhase("paused");
       setNote("This browser can't listen. Try Chrome, or type your answer.");
     }
-  }, []);
+  }, [maths, send]);
 
   // Start listening as soon as talk mode opens.
   useEffect(() => {
@@ -76,6 +93,7 @@ export function TalkMode({
     return () => {
       alive.current = false;
       clearTimeout(t);
+      if (checkTimer.current) clearTimeout(checkTimer.current);
       listener.current?.stop();
       stopSpeaking();
     };
@@ -109,13 +127,14 @@ export function TalkMode({
     } else if (phase === "listening") {
       listener.current?.stop();
       setPhase("paused");
-    } else if (phase === "paused") {
+    } else if (phase === "paused" || phase === "checking") {
       listen();
     }
   }
 
   const label = {
     listening: heard ? "Listening…" : "Listening. Say your working or your answer.",
+    checking: "Is this what you said?",
     thinking: "Thinking…",
     speaking: "Speaking. Tap to interrupt.",
     paused: "Tap to speak",
@@ -129,16 +148,32 @@ export function TalkMode({
         onClick={tapOrb}
         disabled={phase === "thinking" || phase === "done"}
         className={`talk-orb talk-${phase}`}
-        aria-label={phase === "listening" ? "Stop listening" : phase === "speaking" ? "Interrupt and speak" : "Start speaking"}
+        aria-label={phase === "listening" ? "Stop listening" : phase === "speaking" ? "Interrupt and speak" : phase === "checking" ? "Say it again" : "Start speaking"}
       >
         {phase === "speaking" ? <Icon.speaker size={30} /> : phase === "thinking" ? <span className="typing"><span /><span /><span /></span> : <Icon.mic size={30} />}
       </button>
       <div role="status" aria-live="polite" className="min-h-[3.5rem] space-y-1">
         <p className="font-semibold text-navy">{label}</p>
-        {heard && phase !== "speaking" && <p className="text-text-2 text-sm italic max-w-md">&ldquo;{heard}&rdquo;</p>}
+        {heard && phase !== "speaking" && phase !== "checking" && <p className="text-text-2 text-sm italic max-w-md">&ldquo;{heard}&rdquo;</p>}
+        {phase === "checking" && (
+          <>
+            <p className="bubble-maths text-lg max-w-md">{heard.replace(/(\s)-(\s|\d)/g, "$1−$2").replace(/^-/, "−")}</p>
+            <div className="talk-check-bar" style={{ animationDuration: `${CHECK_MS}ms` }} aria-hidden />
+          </>
+        )}
         {note && <p className="text-sm text-ink">{note}</p>}
       </div>
       <div className="flex flex-wrap justify-center gap-2.5">
+        {phase === "checking" && (
+          <>
+            <button type="button" className="btn btn-sm" onClick={() => send(heard)}>
+              <Icon.send size={16} /> Send
+            </button>
+            <button type="button" className="btn btn-outline btn-sm" onClick={listen}>
+              <Icon.mic size={16} /> Say it again
+            </button>
+          </>
+        )}
         <button type="button" className="btn btn-outline btn-sm" onClick={onClose}>
           <Icon.keypad size={16} /> Type instead
         </button>
