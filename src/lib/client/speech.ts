@@ -27,12 +27,21 @@ export function speak(text: string, onEnd?: () => void) {
 let current: HTMLAudioElement | null = null;
 
 /**
- * Speaks and resolves when finished. Tries the tutor's own voice (Cartesia, when switched on);
- * if the server answers without audio, uses the phone's voice instead.
+ * Speaks and resolves when finished. Tries the tutor's natural voice (Cartesia) first; if the
+ * server answers without audio, uses the phone's voice and waits as long as the server asks
+ * (X-Voice-Retry-After, at most an hour) before trying the natural voice again.
  */
+// When the server says the natural voice is paused, don't ask again until it says to.
+let skipServerUntil = 0;
+
 export async function speakAsync(text: string): Promise<void> {
   try {
+    if (Date.now() < skipServerUntil) throw new Error("natural voice paused");
     const res = await fetch("/api/speak", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+    if (res.status === 204) {
+      const retry = Number(res.headers.get("X-Voice-Retry-After") ?? 60);
+      skipServerUntil = Date.now() + Math.min(retry, 3600) * 1000;
+    }
     if (res.status === 200) {
       const url = URL.createObjectURL(await res.blob());
       await new Promise<void>((resolve) => {
