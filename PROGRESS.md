@@ -20,11 +20,11 @@
 ---
 
 ## Up Next
-1. Leak test against a plain chatbot prompt (needs about $1–2 of Token Factory credit).
+1. Leak test against a plain chatbot prompt (about USD 1–2 of the promo credit).
 2. Photo of handwritten working through Nemotron 3.5 Super VL.
 3. Demo video (3 minutes or less), Devpost write-up and feedback section; Blessing joins the hackathon on Devpost.
 
 ---
 
 ## Blockers
-- Token Factory credit: $25 promo code never arrived; trial credit nearly used, so further use bills the card on file. The demo must stay up through judging (2026-12-01 to 12-15).
+- None. Token Factory balance USD 24.98 after the hackathon promo code (2026-10-26); Builder Program credits pending review.
