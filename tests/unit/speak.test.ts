@@ -125,6 +125,13 @@ describe("/api/speak fallback", () => {
     expect(Number(r.headers.get("X-Voice-Retry-After"))).toBeLessThanOrEqual(60);
   });
 
+  it("has no daily cap unless one is set", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("mp3", { status: 200 })));
+    delete process.env.TUTOR_VOICE_CHARS_PER_DAY;
+    const POST = await route();
+    for (let i = 0; i < 5; i++) expect((await POST(req("x".repeat(1000)))).headers.get("X-Voice")).toBe("cartesia");
+  });
+
   it("uses the phone voice when the switch is off", async () => {
     delete process.env.TUTOR_VOICE;
     const r = await (await route())(req());

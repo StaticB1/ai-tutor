@@ -13,7 +13,7 @@ export const maxDuration = 60;
 // How each voice is skipped (per server instance):
 //   - out of credits (402/403, or a quota message)  -> skip it for 1 hour
 //   - busy, server error or a slow reply            -> skip it for 1 minute
-//   - our own daily character budget used up        -> skip it until the next UTC day
+//   - TUTOR_VOICE_CHARS_PER_DAY used up (if set)     -> skip it until the next UTC day
 // When every voice is skipped it answers at once, with X-Voice-Retry-After (the soonest any voice
 // is back) so the browser stops asking until then. A failed request costs no credits, so a retry is free.
 
@@ -123,8 +123,9 @@ export async function POST(req: Request) {
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return new Response(null, { status: 400 });
   const text = mathsToWords(parsed.data.text);
-  // Spread each account's characters over time (Cartesia Free plan: 20,000 a month).
-  const cap = Number(process.env.TUTOR_VOICE_CHARS_PER_DAY ?? 700);
+  // Optional: spread each account's characters over time. Unset means no cap; a voice is used until
+  // its provider says it is out of credits.
+  const cap = Number(process.env.TUTOR_VOICE_CHARS_PER_DAY || Infinity);
 
   const reasons: string[] = [];
   let retryAt = Infinity;
