@@ -27,7 +27,7 @@ export function speak(text: string, onEnd?: () => void) {
 let current: HTMLAudioElement | null = null;
 
 /**
- * Speaks and resolves when finished. Tries the tutor's natural voice (Cartesia) first; if the
+ * Speaks and resolves when finished. Tries the tutor's natural voice (Murf or Cartesia, /api/speak) first; if the
  * server answers without audio, uses the phone's voice and waits as long as the server asks
  * (X-Voice-Retry-After, at most an hour) before trying the natural voice again.
  */

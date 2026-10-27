@@ -1,5 +1,5 @@
 // Turns tutor text with $…$ maths into words a voice can read: "$3x - 12$" becomes "3x minus 12".
-// Used by the phone voice and the Cartesia route alike.
+// Used by the phone voice and the /api/speak route alike.
 
 export function mathsToWords(text: string): string {
   return text

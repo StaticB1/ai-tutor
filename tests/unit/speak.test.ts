@@ -56,6 +56,32 @@ describe("/api/speak fallback", () => {
     expect(r.headers.get("X-Voice")).toBe("phone:daily-budget");
   });
 
+  it("returns Murf audio, decoded from base64, when TUTOR_VOICE=murf", async () => {
+    process.env.TUTOR_VOICE = "murf";
+    process.env.MURF_API_KEY = "test";
+    let sent: { voiceId?: string; encodeAsBase64?: boolean } = {};
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url: string, init?: RequestInit) => {
+        sent = JSON.parse(String(init?.body));
+        return Response.json({ encodedAudio: Buffer.from("mp3").toString("base64") });
+      }),
+    );
+    const r = await (await route())(req());
+    expect(r.status).toBe(200);
+    expect(r.headers.get("X-Voice")).toBe("murf");
+    expect(await r.text()).toBe("mp3");
+    expect(sent).toMatchObject({ voiceId: "en-US-julia", encodeAsBase64: true });
+  });
+
+  it("falls back when Murf answers without audio", async () => {
+    process.env.TUTOR_VOICE = "murf";
+    process.env.MURF_API_KEY = "test";
+    vi.stubGlobal("fetch", vi.fn(async () => Response.json({ warning: "x" })));
+    const r = await (await route())(req());
+    expect(r.headers.get("X-Voice")).toBe("phone:error-502");
+  });
+
   it("uses the phone voice when the switch is off", async () => {
     delete process.env.TUTOR_VOICE;
     const r = await (await route())(req());
