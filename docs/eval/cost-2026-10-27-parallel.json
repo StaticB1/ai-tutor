@@ -1,0 +1,73 @@
+{
+  "when": "2026-10-27T03:31:55.453Z",
+  "report": {
+    "Super VL screen (screen and marker in parallel)": {
+      "questions": 3,
+      "finished": 3,
+      "turns": 10,
+      "usdPerQuestion": 0.00309,
+      "turnMsMedian": 2400,
+      "turnMsMax": 3064,
+      "byRole": {
+        "marker": {
+          "calls": 10,
+          "promptTokens": 3324,
+          "cachedTokens": 0,
+          "usd": 0.0012636000000000001
+        },
+        "safety": {
+          "calls": 10,
+          "promptTokens": 1951,
+          "cachedTokens": 0,
+          "usd": 0.0006483000000000001
+        },
+        "tutor": {
+          "calls": 10,
+          "promptTokens": 5877,
+          "cachedTokens": 0,
+          "usd": 0.0068249999999999995
+        },
+        "checker": {
+          "calls": 7,
+          "promptTokens": 1493,
+          "cachedTokens": 0,
+          "usd": 0.0005379
+        }
+      }
+    },
+    "Lightning screen (screen and marker in parallel)": {
+      "questions": 3,
+      "finished": 3,
+      "turns": 10,
+      "usdPerQuestion": 0.00295,
+      "turnMsMedian": 2248,
+      "turnMsMax": 2566,
+      "byRole": {
+        "safety": {
+          "calls": 10,
+          "promptTokens": 1951,
+          "cachedTokens": 0,
+          "usd": 0.00013386
+        },
+        "marker": {
+          "calls": 10,
+          "promptTokens": 3335,
+          "cachedTokens": 0,
+          "usd": 0.0012669
+        },
+        "tutor": {
+          "calls": 10,
+          "promptTokens": 5908,
+          "cachedTokens": 0,
+          "usd": 0.006895
+        },
+        "checker": {
+          "calls": 7,
+          "promptTokens": 1504,
+          "cachedTokens": 0,
+          "usd": 0.0005412
+        }
+      }
+    }
+  }
+}

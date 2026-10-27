@@ -37,7 +37,7 @@ export async function assess(call: ModelCall, item: Item, state: TutorState, his
   const answerPoint = item.markingPoints.find((p) => p.answer);
   let raw: z.infer<typeof Verdict> = { points: {} };
   try {
-    const { text } = await call("judge", [{ role: "user", content: assessorPrompt(item, state, history, learner) }], {
+    const { text } = await call("marker", [{ role: "user", content: assessorPrompt(item, state, history, learner) }], {
       json: true,
       maxTokens: 160,
       temperature: 0,

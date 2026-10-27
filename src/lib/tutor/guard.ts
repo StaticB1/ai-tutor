@@ -50,7 +50,7 @@ export async function modelLeaks(call: ModelCall, item: Item, state: TutorState,
     .filter(Boolean)
     .join("\n\n");
   try {
-    const { text } = await call("judge", [{ role: "user", content: prompt }], { json: true, maxTokens: 120, temperature: 0 });
+    const { text } = await call("checker", [{ role: "user", content: prompt }], { json: true, maxTokens: 120, temperature: 0 });
     const j = parseJson(text) as { stated?: Record<string, unknown> } | null;
     return unmet.filter((p) => j?.stated?.[p.id] === true || j?.stated?.[p.id] === "true").map((p) => `point ${p.id}`);
   } catch {

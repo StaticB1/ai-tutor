@@ -1,0 +1,73 @@
+{
+  "when": "2026-10-27T03:30:33.336Z",
+  "report": {
+    "before (quick jobs on Super VL)": {
+      "questions": 3,
+      "finished": 3,
+      "turns": 10,
+      "usdPerQuestion": 0.00317,
+      "turnMsMedian": 3074,
+      "turnMsMax": 3246,
+      "byRole": {
+        "safety": {
+          "calls": 10,
+          "promptTokens": 1951,
+          "cachedTokens": 0,
+          "usd": 0.0006483000000000001
+        },
+        "marker": {
+          "calls": 10,
+          "promptTokens": 3359,
+          "cachedTokens": 0,
+          "usd": 0.0012741
+        },
+        "tutor": {
+          "calls": 10,
+          "promptTokens": 5954,
+          "cachedTokens": 0,
+          "usd": 0.007037
+        },
+        "checker": {
+          "calls": 7,
+          "promptTokens": 1527,
+          "cachedTokens": 0,
+          "usd": 0.0005481
+        }
+      }
+    },
+    "after (routing from the benchmark)": {
+      "questions": 3,
+      "finished": 3,
+      "turns": 10,
+      "usdPerQuestion": 0.00304,
+      "turnMsMedian": 2652,
+      "turnMsMax": 2993,
+      "byRole": {
+        "safety": {
+          "calls": 10,
+          "promptTokens": 1951,
+          "cachedTokens": 0,
+          "usd": 0.00013386
+        },
+        "marker": {
+          "calls": 10,
+          "promptTokens": 3381,
+          "cachedTokens": 0,
+          "usd": 0.0012806999999999999
+        },
+        "tutor": {
+          "calls": 10,
+          "promptTokens": 6006,
+          "cachedTokens": 0,
+          "usd": 0.007155
+        },
+        "checker": {
+          "calls": 7,
+          "promptTokens": 1552,
+          "cachedTokens": 0,
+          "usd": 0.0005556
+        }
+      }
+    }
+  }
+}

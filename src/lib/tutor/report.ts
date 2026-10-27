@@ -33,7 +33,7 @@ export async function buildReport(call: ModelCall, item: Item, state: TutorState
       .map((t) => `${t.role === "learner" ? "Learner" : "Tutor"}: ${t.text}`)
       .join("\n");
     const { text } = await call(
-      "judge",
+      "report",
       [
         {
           role: "user",

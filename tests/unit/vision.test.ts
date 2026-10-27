@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { ModelCall } from "@/lib/tutor/model";
 import { readWorking } from "@/lib/tutor/vision";
 
-const reply = (text: string): ModelCall => async () => ({ text, usage: { model: "vision", promptTokens: 0, completionTokens: 0, ms: 0 } });
+const reply = (text: string): ModelCall => async () => ({ text, usage: { model: "vision", promptTokens: 0, cachedTokens: 0, completionTokens: 0, ms: 0 } });
 const img = "data:image/jpeg;base64,AAAA";
 
 describe("readWorking", () => {

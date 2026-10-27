@@ -355,6 +355,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
                 next={next}
                 onReport={() => setReportOpen(true)}
                 onRestart={restart}
+                token={token}
               />
             )}
             <div ref={endRef} className="scroll-mb-72 lg:scroll-mb-4" />
@@ -475,6 +476,7 @@ function Finished({
   next,
   onReport,
   onRestart,
+  token,
 }: {
   revealed: boolean;
   progress: { met: number; needed: number };
@@ -484,6 +486,7 @@ function Finished({
   next: Meta | null;
   onReport: () => void;
   onRestart: () => void;
+  token: string | null;
 }) {
   const praise = revealed
     ? "You kept going through every hint, and that effort counts. Read the working below, then try the next one on your own."
@@ -554,7 +557,60 @@ function Finished({
           ))}
         </ol>
       </section>
+
+      <RealLife token={token} />
     </div>
+  );
+}
+
+interface RealLifeCard {
+  title: string;
+  text: string;
+  url: string;
+  site: string;
+}
+
+/** Where the idea turns up in real life, found by a live search once the question is done. */
+function RealLife({ token }: { token: string | null }) {
+  const [cards, setCards] = useState<RealLifeCard[] | null>(null);
+  useEffect(() => {
+    if (!token) return;
+    let live = true;
+    fetch("/api/explore", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }) })
+      .then((r) => (r.status === 200 ? r.json() : { cards: [] }))
+      .then((d: { cards?: RealLifeCard[] }) => live && setCards(d.cards ?? []))
+      .catch(() => live && setCards([]));
+    return () => {
+      live = false;
+    };
+  }, [token]);
+  if (cards !== null && cards.length === 0) return null;
+  return (
+    <section className="card p-5 sm:p-6 space-y-3 no-print" aria-labelledby="real-title" aria-busy={cards === null}>
+      <h2 id="real-title" className="eyebrow">
+        Where you&apos;ll see this
+      </h2>
+      {cards === null ? (
+        <div className="grid gap-3 sm:grid-cols-3" aria-hidden>
+          {[0, 1, 2].map((n) => (
+            <div key={n} className="h-28 rounded-2xl bg-tint-2 animate-pulse" />
+          ))}
+        </div>
+      ) : (
+        <ul className="grid gap-3 sm:grid-cols-3">
+          {cards.map((c) => (
+            <li key={c.url} className="rounded-2xl border border-line p-4 flex flex-col gap-2">
+              <h3 className="font-semibold text-navy leading-snug">{c.title}</h3>
+              <p className="text-sm text-text-2 flex-1">{c.text}</p>
+              <a href={c.url} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-navy underline underline-offset-4">
+                Read more on {c.site}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="text-xs text-muted">Found with a live Tavily web search of trusted education sites and summarised by NVIDIA Nemotron. Each card links to its source.</p>
+    </section>
   );
 }
 
