@@ -101,8 +101,22 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
     [speaking],
   );
 
+  // The reply being worked out, so talk mode can drop it when the learner was misheard.
+  const turnAbort = useRef<AbortController | null>(null);
+
+  /** Drops the reply being worked out. False if it is too late: the reply has already been shown. */
+  function cancelTurn(): boolean {
+    const ctrl = turnAbort.current;
+    if (!ctrl) return false;
+    turnAbort.current = null;
+    ctrl.abort();
+    return true;
+  }
+
   async function send(message: string, action: "message" | "reveal" = "message") {
     if (busy || solution) return;
+    const ctrl = new AbortController();
+    turnAbort.current = ctrl;
     setBusy(true);
     setFailed(null);
     setErrorText(null);
@@ -116,8 +130,12 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ itemId: item.id, token, message, history, action }),
+        signal: ctrl.signal,
       });
       const data = await res.json().catch(() => ({}));
+      if (ctrl.signal.aborted) throw new Error("cancelled");
+      // From here the reply is shown, so it can no longer be dropped.
+      if (turnAbort.current === ctrl) turnAbort.current = null;
       if (!res.ok) throw new Error(data.error ?? "Something went wrong. Please try again.");
       const gained = data.progress.met - progress.met;
       setToken(data.token);
@@ -154,6 +172,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
       }
     } catch (e) {
       setLines((l) => l.slice(0, -1));
+      if (ctrl.signal.aborted) return;
       setFailed(message);
       setErrorText(e instanceof Error ? e.message : "Something went wrong.");
       composer.current?.setText(message);
@@ -387,6 +406,7 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
                   finished={Boolean(solution)}
                   maths={/math|physics|science|accounting/i.test(item.subject)}
                   onSay={sendLearner}
+                  onCancel={cancelTurn}
                   onClose={() => setTalking(false)}
                 />
               ) : (

@@ -185,10 +185,6 @@ html[data-text="large"] { font-size: 112.5%; }
   [data-theme="dark"] .talk-speaking { background: var(--st-mint); color: var(--st-mint-on); }
   .talk-paused { background: var(--st-ink); }
   [data-theme="dark"] .talk-paused { background: var(--st-mint); color: var(--st-mint-on); }
-  .talk-checking { background: var(--st-ink); }
-  [data-theme="dark"] .talk-checking { background: var(--st-mint); color: var(--st-mint-on); }
-  .talk-check-bar { width: 10rem; height: 4px; margin: 0.5rem auto 0; border-radius: 9999px; background: var(--st-lift); transform-origin: left; animation: check-bar linear forwards; }
-  @keyframes check-bar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
   .reward { display: inline-flex; align-items: center; gap: 0.5rem; height: 2.75rem; padding: 0 1.25rem; border-radius: 9999px; background: var(--tint-2); color: var(--st-navy); font-weight: 600; font-size: 1rem; }
 
   /* Progress */
