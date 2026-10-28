@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "./icons";
 import { listenOnce, type Listener } from "@/lib/client/listen";
 import { fill, prefetch, speakAsync, stopSpeaking } from "@/lib/client/speech";
-import { STILL_THINKING, THINKING } from "@/lib/talk-lines";
+import { STILL_THINKING, THINKING, type Line } from "@/lib/talk-lines";
 
 type Phase = "listening" | "checking" | "thinking" | "speaking" | "paused" | "done";
 
@@ -36,7 +36,7 @@ export function TalkMode({
   onClose,
 }: {
   /** said when talk mode opens, before it listens */
-  opening: string;
+  opening: Line;
   /** the newest tutor message; a new index means a new reply to speak */
   reply: { index: number; text: string } | null;
   busy: boolean;

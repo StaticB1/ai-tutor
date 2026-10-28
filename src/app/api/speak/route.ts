@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { ITEMS } from "@/content/items";
+import { getItem } from "@/content/items";
 import { allow, clientKey } from "@/lib/rate-limit";
 import { mathsToWords } from "@/lib/speech-text";
-import { openingLine, STILL_THINKING, THINKING } from "@/lib/talk-lines";
+import { opening, STILL_THINKING, THINKING } from "@/lib/talk-lines";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -19,8 +19,9 @@ export const maxDuration = 60;
 // When every voice is skipped it answers at once, with X-Voice-Retry-After (the soonest any voice
 // is back) so the browser stops asking until then. A failed request costs no credits, so a retry is free.
 //
-// Fixed lines (each question's opening, the "let me think" fillers) are kept once made, per server
-// instance, so they play at once and cost no credits after the first time.
+// Fixed lines (each question's opening, the "let me think" fillers) are asked for by name with GET
+// and may be cached by the CDN and the browser for a day, so they play at once and cost no credits
+// after the first time.
 
 const Body = z.object({ text: z.string().min(1).max(1200) });
 
@@ -93,11 +94,45 @@ interface VoiceState {
 }
 const states = new Map<string, VoiceState>();
 
-const FIXED = new Set([...THINKING, ...STILL_THINKING, ...ITEMS.map((i) => openingLine(i.question))]);
+const DAY_SECONDS = 24 * 60 * 60;
 const kept = new Map<string, { audio: ArrayBuffer; voice: string }>();
 
-function audio(body: BodyInit | null, voice: string) {
-  return new Response(body, { headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store", "X-Voice": voice } });
+function fixedLine(key: string): string | undefined {
+  const filler = [...THINKING, ...STILL_THINKING].find((l) => l.key === key);
+  if (filler) return filler.text;
+  const item = key.startsWith("open-") ? getItem(key.slice(5)) : undefined;
+  return item ? opening(item).text : undefined;
+}
+
+function keptAudio(made: { audio: ArrayBuffer; voice: string }) {
+  return new Response(made.audio, {
+    headers: {
+      "Content-Type": "audio/mpeg",
+      "Cache-Control": `public, max-age=${DAY_SECONDS}`,
+      "Vercel-CDN-Cache-Control": `max-age=${DAY_SECONDS}`,
+      "X-Voice": made.voice,
+    },
+  });
+}
+
+/** A fixed line by name: made once, then served from memory, the CDN or the browser's cache. */
+export async function GET(req: Request) {
+  const key = new URL(req.url).searchParams.get("line") ?? "";
+  const text = fixedLine(key);
+  if (!text) return new Response(null, { status: 404 });
+  const hit = kept.get(key);
+  if (hit) return keptAudio(hit);
+  const res = await say(req, text);
+  if (res.status !== 200) return res;
+  const made = { audio: await res.arrayBuffer(), voice: res.headers.get("X-Voice") ?? "" };
+  kept.set(key, made);
+  return keptAudio(made);
+}
+
+export async function POST(req: Request) {
+  const parsed = Body.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return new Response(null, { status: 400 });
+  return say(req, parsed.data.text);
 }
 
 function stateOf(name: string): VoiceState {
@@ -117,7 +152,7 @@ function pause(name: string, s: VoiceState, reason: string, ms: number) {
   s.pausedUntil = Date.now() + ms;
 }
 
-export async function POST(req: Request) {
+async function say(req: Request, said: string): Promise<Response> {
   const voices = (process.env.TUTOR_VOICE ?? "")
     .split(",")
     .map((n) => n.trim())
@@ -128,15 +163,10 @@ export async function POST(req: Request) {
     });
   if (voices.length === 0) return phoneVoice(["off"], Date.now() + HOUR);
   if (!allow(`voice:${clientKey(req)}`, 60)) return phoneVoice(["busy"], Date.now() + MINUTE);
-
-  const parsed = Body.safeParse(await req.json().catch(() => null));
-  if (!parsed.success) return new Response(null, { status: 400 });
-  const hit = kept.get(parsed.data.text);
-  if (hit) return audio(hit.audio, hit.voice);
   if (voices.every((v) => Date.now() < stateOf(v.name).pausedUntil)) {
     return phoneVoice(voices.map((v) => stateOf(v.name).pausedFor), Math.min(...voices.map((v) => stateOf(v.name).pausedUntil)));
   }
-  const text = mathsToWords(parsed.data.text);
+  const text = mathsToWords(said);
   // Optional: spread each account's characters over time. Unset means no cap; a voice is used until
   // its provider says it is out of credits.
   const cap = Number(process.env.TUTOR_VOICE_CHARS_PER_DAY || Infinity);
@@ -178,12 +208,7 @@ export async function POST(req: Request) {
     if (s.pausedFor) console.log(JSON.stringify({ voice: v.name, resumed: s.pausedFor }));
     s.pausedFor = "";
     s.charsToday += text.length;
-    if (FIXED.has(parsed.data.text)) {
-      const made = await res.arrayBuffer();
-      kept.set(parsed.data.text, { audio: made, voice: v.name });
-      return audio(made, v.name);
-    }
-    return audio(res.body, v.name);
+    return new Response(res.body, { headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store", "X-Voice": v.name } });
   }
   return phoneVoice(reasons, retryAt);
 }

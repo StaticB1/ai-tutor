@@ -133,19 +133,30 @@ describe("/api/speak fallback", () => {
     for (let i = 0; i < 5; i++) expect((await POST(req("x".repeat(1000)))).headers.get("X-Voice")).toBe("cartesia");
   });
 
-  it("makes a fixed line once and serves it from memory after that", async () => {
+  it("serves a fixed line by name: made once, then kept and cacheable", async () => {
+    const f = vi.fn(async () => new Response("mp3", { status: 200 }));
+    vi.stubGlobal("fetch", f);
+    vi.resetModules();
+    const GET = (await import("@/app/api/speak/route")).GET;
+    const get = (line: string) => GET(new Request(`http://x/api/speak?line=${line}`, { headers: { "x-forwarded-for": "9.9.9.9" } }));
+    const first = await get(THINKING[0].key as string);
+    expect(await first.text()).toBe("mp3");
+    expect(first.headers.get("Cache-Control")).toContain("public");
+    expect(await (await get(THINKING[0].key as string)).text()).toBe("mp3");
+    expect(f).toHaveBeenCalledTimes(1);
+    expect((await get("open-maths-linear-equation")).status).toBe(200);
+    expect((await get("open-no-such-item")).status).toBe(404);
+    expect((await get("anything")).status).toBe(404);
+  });
+
+  it("never caches a reply", async () => {
     const f = vi.fn(async () => new Response("mp3", { status: 200 }));
     vi.stubGlobal("fetch", f);
     const POST = await route();
-    expect(await (await POST(req(THINKING[0]))).text()).toBe("mp3");
-    const again = await POST(req(THINKING[0]));
-    expect(await again.text()).toBe("mp3");
-    expect(again.headers.get("X-Voice")).toBe("cartesia");
-    expect(f).toHaveBeenCalledTimes(1);
-    // A reply is never kept.
+    const r = await POST(req("Good start."));
+    expect(r.headers.get("Cache-Control")).toBe("no-store");
     await POST(req("Good start."));
-    await POST(req("Good start."));
-    expect(f).toHaveBeenCalledTimes(3);
+    expect(f).toHaveBeenCalledTimes(2);
   });
 
   it("uses the phone voice when the switch is off", async () => {
