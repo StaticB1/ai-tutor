@@ -40,7 +40,16 @@ describe("explore cards", () => {
     let body: { include_domains?: string[] } = {};
     const fetcher = (async (_url: string, init?: RequestInit) => {
       body = JSON.parse(String(init?.body));
-      return new Response(JSON.stringify({ results: [{ title: "T", url: "https://www.britannica.com/x", content: "c" }, { url: "https://no-title.org" }] }));
+      return new Response(
+        JSON.stringify({
+          results: [
+            { title: "T", url: "https://www.britannica.com/x", content: "c" },
+            { url: "https://no-title.org" },
+            { title: "Report", url: "https://documents.worldbank.org/curated/en/1/pdf/report.pdf", content: "c" },
+            { title: "Paper", url: "https://openknowledge.fao.org/server/api/core/bitstreams/768c/content", content: "c" },
+          ],
+        }),
+      );
     }) as typeof fetch;
     const found = await search("q", "key", fetcher);
     expect(body.include_domains).toContain("bbc.co.uk");

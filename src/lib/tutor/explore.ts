@@ -49,13 +49,14 @@ export async function search(query: string, key: string, fetcher: typeof fetch =
   const res = await fetcher("https://api.tavily.com/search", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ query, search_depth: "basic", max_results: 6, include_domains: SITES, topic: "general" }),
+    body: JSON.stringify({ query, search_depth: "basic", max_results: 8, include_domains: SITES, topic: "general" }),
     signal: AbortSignal.timeout(15_000),
   });
   if (!res.ok) throw new Error(`tavily returned ${res.status}`);
   const data = (await res.json()) as { results?: Array<{ title?: string; url?: string; content?: string }> };
   return (data.results ?? [])
-    .filter((r) => r.url && r.title)
+    // web pages only: a PDF is heavy to open on a phone
+    .filter((r) => r.url && r.title && !/\.pdf($|[?#])|\/pdf\/|\/bitstreams\//i.test(r.url))
     .map((r) => ({ title: r.title as string, url: r.url as string, content: (r.content ?? "").slice(0, 700) }));
 }
 
