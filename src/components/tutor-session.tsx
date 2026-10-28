@@ -6,6 +6,7 @@ import { Composer, type ComposerHandle } from "./composer";
 import { Icon } from "./icons";
 import { TeacherReport } from "./teacher-report";
 import { TalkMode } from "./talk-mode";
+import { CARRY_ON, openingLine } from "@/lib/talk-lines";
 import { listeningAvailable } from "@/lib/client/listen";
 import { store, useStore, type SavedLine, type SavedSession } from "@/lib/client/store";
 import { speak, speechAvailable, stopSpeaking } from "@/lib/client/speech";
@@ -373,6 +374,11 @@ function Session({ item, questionHtml, all, saved, canSpeak }: Props & { saved: 
               )}
               {talking ? (
                 <TalkMode
+                  opening={(() => {
+                    const last = [...lines].reverse().find((l) => l.role === "tutor");
+                    if (lines.length === 0 || !last) return openingLine(item.question);
+                    return `${CARRY_ON} ${last.text}`;
+                  })()}
                   reply={(() => {
                     for (let i = lines.length - 1; i >= 0; i--) if (lines[i].role === "tutor") return { index: i, text: lines[i].text };
                     return null;

@@ -3,12 +3,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Icon } from "./icons";
 import { listenOnce, type Listener } from "@/lib/client/listen";
-import { speakAsync, stopSpeaking } from "@/lib/client/speech";
+import { fill, prefetch, speakAsync, stopSpeaking } from "@/lib/client/speech";
+import { STILL_THINKING, THINKING } from "@/lib/talk-lines";
 
 type Phase = "listening" | "checking" | "thinking" | "speaking" | "paused" | "done";
 
 // On maths, what was heard waits this long on screen before it is sent, so a misheard number can be said again.
 const CHECK_MS = 4000;
+// If the reply is still not ready this long after sending, say so once.
+const STILL_MS = 6000;
 
 const ERRORS: Record<string, string> = {
   "not-allowed": "Allow the microphone in your browser to talk to the tutor.",
@@ -19,10 +22,12 @@ const ERRORS: Record<string, string> = {
 };
 
 /**
- * Hands-free conversation: listen to the learner, send what they said, speak the tutor's reply,
- * then listen again, until they stop or finish the question.
+ * Hands-free conversation: the tutor speaks first, then it listens to the learner, sends what they
+ * said, speaks the reply and listens again, until they stop or finish the question. While a reply is
+ * being worked out it says a short line ("Let me look at that"), so the wait is not silent.
  */
 export function TalkMode({
+  opening,
   reply,
   busy,
   finished,
@@ -30,6 +35,8 @@ export function TalkMode({
   onSay,
   onClose,
 }: {
+  /** said when talk mode opens, before it listens */
+  opening: string;
   /** the newest tutor message; a new index means a new reply to speak */
   reply: { index: number; text: string } | null;
   busy: boolean;
@@ -46,6 +53,15 @@ export function TalkMode({
   const spokenIndex = useRef<number | null>(reply?.index ?? null);
   const alive = useRef(true);
   const checkTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const stillTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Bumped whenever the learner cuts the tutor off, so speech that was interrupted does not
+  // start listening a second time when it ends.
+  const speech = useRef(0);
+  const openingRef = useRef(opening);
+  const finishedRef = useRef(finished);
+  useEffect(() => {
+    finishedRef.current = finished;
+  }, [finished]);
   // The parent passes a new onSay function on every render; keep the latest in a ref so that
   // listening is never restarted (and the learner cut off) just because the page re-rendered.
   const sayRef = useRef(onSay);
@@ -58,7 +74,15 @@ export function TalkMode({
     checkTimer.current = null;
     setPhase("thinking");
     sayRef.current(t);
+    fill(THINKING);
+    if (stillTimer.current) clearTimeout(stillTimer.current);
+    stillTimer.current = setTimeout(() => fill(STILL_THINKING), STILL_MS);
   }, []);
+
+  const clearStill = () => {
+    if (stillTimer.current) clearTimeout(stillTimer.current);
+    stillTimer.current = null;
+  };
 
   const listen = useCallback(() => {
     if (!alive.current) return;
@@ -86,14 +110,23 @@ export function TalkMode({
     }
   }, [maths, send]);
 
-  // Start listening as soon as talk mode opens.
+  // Speak first when talk mode opens, then listen. The fillers are fetched now so they are ready
+  // by the time the learner has said something.
   useEffect(() => {
     alive.current = true;
-    const t = setTimeout(listen, 150);
+    prefetch([...THINKING, ...STILL_THINKING]);
+    const t = setTimeout(async () => {
+      if (finishedRef.current) return setPhase("done");
+      const mine = ++speech.current;
+      setPhase("speaking");
+      await speakAsync(openingRef.current);
+      if (alive.current && speech.current === mine) listen();
+    }, 150);
     return () => {
       alive.current = false;
       clearTimeout(t);
       if (checkTimer.current) clearTimeout(checkTimer.current);
+      clearStill();
       listener.current?.stop();
       stopSpeaking();
     };
@@ -104,17 +137,15 @@ export function TalkMode({
   // only closing talk mode (alive = false) stops the loop.
   const replyIndex = reply?.index ?? null;
   const replyText = reply?.text ?? "";
-  const finishedRef = useRef(finished);
   useEffect(() => {
-    finishedRef.current = finished;
-  }, [finished]);
-  useEffect(() => {
+    if (!busy) clearStill();
     if (replyIndex === null || replyIndex === spokenIndex.current || busy) return;
     spokenIndex.current = replyIndex;
     (async () => {
+      const mine = ++speech.current;
       setPhase("speaking");
       await speakAsync(replyText);
-      if (!alive.current) return;
+      if (!alive.current || speech.current !== mine) return;
       if (finishedRef.current) setPhase("done");
       else listen();
     })();
@@ -122,6 +153,7 @@ export function TalkMode({
 
   function tapOrb() {
     if (phase === "speaking") {
+      speech.current++;
       stopSpeaking();
       listen();
     } else if (phase === "listening") {

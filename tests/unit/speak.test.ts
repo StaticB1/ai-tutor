@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { THINKING } from "@/lib/talk-lines";
 
 // Each test loads a fresh copy of the route so its pause state starts clean.
 async function route() {
@@ -130,6 +131,21 @@ describe("/api/speak fallback", () => {
     delete process.env.TUTOR_VOICE_CHARS_PER_DAY;
     const POST = await route();
     for (let i = 0; i < 5; i++) expect((await POST(req("x".repeat(1000)))).headers.get("X-Voice")).toBe("cartesia");
+  });
+
+  it("makes a fixed line once and serves it from memory after that", async () => {
+    const f = vi.fn(async () => new Response("mp3", { status: 200 }));
+    vi.stubGlobal("fetch", f);
+    const POST = await route();
+    expect(await (await POST(req(THINKING[0]))).text()).toBe("mp3");
+    const again = await POST(req(THINKING[0]));
+    expect(await again.text()).toBe("mp3");
+    expect(again.headers.get("X-Voice")).toBe("cartesia");
+    expect(f).toHaveBeenCalledTimes(1);
+    // A reply is never kept.
+    await POST(req("Good start."));
+    await POST(req("Good start."));
+    expect(f).toHaveBeenCalledTimes(3);
   });
 
   it("uses the phone voice when the switch is off", async () => {

@@ -1,6 +1,8 @@
 import { z } from "zod";
+import { ITEMS } from "@/content/items";
 import { allow, clientKey } from "@/lib/rate-limit";
 import { mathsToWords } from "@/lib/speech-text";
+import { openingLine, STILL_THINKING, THINKING } from "@/lib/talk-lines";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -16,6 +18,9 @@ export const maxDuration = 60;
 //   - TUTOR_VOICE_CHARS_PER_DAY used up (if set)     -> skip it until the next UTC day
 // When every voice is skipped it answers at once, with X-Voice-Retry-After (the soonest any voice
 // is back) so the browser stops asking until then. A failed request costs no credits, so a retry is free.
+//
+// Fixed lines (each question's opening, the "let me think" fillers) are kept once made, per server
+// instance, so they play at once and cost no credits after the first time.
 
 const Body = z.object({ text: z.string().min(1).max(1200) });
 
@@ -88,6 +93,13 @@ interface VoiceState {
 }
 const states = new Map<string, VoiceState>();
 
+const FIXED = new Set([...THINKING, ...STILL_THINKING, ...ITEMS.map((i) => openingLine(i.question))]);
+const kept = new Map<string, { audio: ArrayBuffer; voice: string }>();
+
+function audio(body: BodyInit | null, voice: string) {
+  return new Response(body, { headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store", "X-Voice": voice } });
+}
+
 function stateOf(name: string): VoiceState {
   let s = states.get(name);
   if (!s) states.set(name, (s = { pausedUntil: 0, pausedFor: "", day: "", charsToday: 0 }));
@@ -115,13 +127,15 @@ export async function POST(req: Request) {
       return v && key ? [{ name, key, speak: v.speak }] : [];
     });
   if (voices.length === 0) return phoneVoice(["off"], Date.now() + HOUR);
-  if (voices.every((v) => Date.now() < stateOf(v.name).pausedUntil)) {
-    return phoneVoice(voices.map((v) => stateOf(v.name).pausedFor), Math.min(...voices.map((v) => stateOf(v.name).pausedUntil)));
-  }
   if (!allow(`voice:${clientKey(req)}`, 60)) return phoneVoice(["busy"], Date.now() + MINUTE);
 
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return new Response(null, { status: 400 });
+  const hit = kept.get(parsed.data.text);
+  if (hit) return audio(hit.audio, hit.voice);
+  if (voices.every((v) => Date.now() < stateOf(v.name).pausedUntil)) {
+    return phoneVoice(voices.map((v) => stateOf(v.name).pausedFor), Math.min(...voices.map((v) => stateOf(v.name).pausedUntil)));
+  }
   const text = mathsToWords(parsed.data.text);
   // Optional: spread each account's characters over time. Unset means no cap; a voice is used until
   // its provider says it is out of credits.
@@ -164,7 +178,12 @@ export async function POST(req: Request) {
     if (s.pausedFor) console.log(JSON.stringify({ voice: v.name, resumed: s.pausedFor }));
     s.pausedFor = "";
     s.charsToday += text.length;
-    return new Response(res.body, { headers: { "Content-Type": "audio/mpeg", "Cache-Control": "no-store", "X-Voice": v.name } });
+    if (FIXED.has(parsed.data.text)) {
+      const made = await res.arrayBuffer();
+      kept.set(parsed.data.text, { audio: made, voice: v.name });
+      return audio(made, v.name);
+    }
+    return audio(res.body, v.name);
   }
   return phoneVoice(reasons, retryAt);
 }
