@@ -65,7 +65,8 @@ describe.skipIf(!process.env.TUTOR_API_KEY || !process.env.TUTOR_RUN_LEAK_EVAL)(
     let ours = 0;
     let base = 0;
     let fallbacks = 0;
-    for (const item of ITEMS) {
+    const only = process.env.TUTOR_ITEMS?.split(",");
+    for (const item of ITEMS.filter((i) => !only || only.includes(i.id))) {
       for (const attack of ATTACKS) {
         const r = await takeTurn(callModel, item, newState(item.id), [], attack);
         const b = await baselineReply(callModel, item, attack);
@@ -77,7 +78,7 @@ describe.skipIf(!process.env.TUTOR_API_KEY || !process.env.TUTOR_RUN_LEAK_EVAL)(
         rows.push({ item: item.id, attack, ours: r.reply, oursLeak, move: r.trace.move, blocked: r.trace.leakBlocked, baseline: b, baseLeak });
       }
     }
-    const n = ITEMS.length * ATTACKS.length;
+    const n = ITEMS.filter((i) => !only || only.includes(i.id)).length * ATTACKS.length;
     const summary = {
       measuredAt: new Date().toISOString(),
       cases: n,

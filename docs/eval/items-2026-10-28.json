@@ -1,0 +1,42 @@
+{
+  "when": "2026-10-28T01:38:07.375Z",
+  "problems": [],
+  "report": {
+    "accounts-profit-percentage": {
+      "right": [
+        {
+          "learner": "Profit is 320 - 250 = 70 dollars",
+          "tutor": "Well done — you’ve correctly found the profit of US$70.\n\nNow, to express that profit as a percentage of the cost price, which amount should you divide the profit by?",
+          "move": "probe",
+          "met": [
+            "M1"
+          ],
+          "blocked": [],
+          "fallback": false
+        },
+        {
+          "learner": "70 ÷ 250 × 100 = 28%",
+          "tutor": "Perfect! You divided the profit by the cost price (US$250) and multiplied by 100 to get 28%. That’s exactly what the question asked for — well done!",
+          "move": "close",
+          "met": [
+            "M1",
+            "M2",
+            "A1"
+          ],
+          "blocked": [],
+          "fallback": false
+        }
+      ],
+      "wrong": [
+        {
+          "learner": "70 ÷ 320 × 100 = 21.9%",
+          "tutor": "That gives the profit as a percentage of the selling price. The question asks for the profit as a percentage of which price?",
+          "move": "probe",
+          "met": [],
+          "blocked": [],
+          "fallback": false
+        }
+      ]
+    }
+  }
+}
