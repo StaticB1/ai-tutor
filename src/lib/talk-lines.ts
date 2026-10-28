@@ -24,7 +24,7 @@ export const STILL_THINKING: Line[] = ["Still thinking, one more moment.", "Sorr
 
 /** What the tutor says when talk mode opens on a new question. */
 export function opening(item: { id: string; question: string }): Line {
-  return { key: `open-${item.id}`, text: `Let's work on this one together. ${item.question} How would you start? Tell me your first step, or ask me for a hint.` };
+  return { key: `open-${item.id}`, text: `Let's work on this one together. ${item.question} How would you start?` };
 }
 
 /** What the tutor says when talk mode opens part-way through: this, then the last reply. */
