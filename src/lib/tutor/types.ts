@@ -28,6 +28,8 @@ export interface Item {
   subject: string;
   level: string;
   topic: string;
+  /** hidden: what to search for in "Where you'll see this" once the question is finished */
+  explore?: string;
   /** shown: markdown with $...$ maths */
   question: string;
   marks: number;

@@ -10,6 +10,7 @@ export const ITEMS: Item[] = [
     subject: "Mathematics",
     level: "Form 2",
     topic: "Linear equations",
+    explore: "how linear equations are used in everyday life, such as budgeting and pricing",
     question: "Solve $3(x - 4) = 2x + 5$.",
     marks: 3,
     markingPoints: [
@@ -34,6 +35,7 @@ export const ITEMS: Item[] = [
     subject: "Mathematics",
     level: "Form 3",
     topic: "Percentages",
+    explore: "how shop discounts and percentage reductions work",
     question: "A school bag costs US\\$40. The shop reduces the price by 15%. In a later sale, the new price is reduced by a further 10%. Find the final price.",
     marks: 3,
     markingPoints: [
@@ -55,6 +57,7 @@ export const ITEMS: Item[] = [
     subject: "Mathematics",
     level: "Form 4",
     topic: "Pythagoras' theorem",
+    explore: "Pythagoras' theorem used in building and construction",
     question: "A ladder 5 m long leans against a vertical wall. The foot of the ladder is 1.4 m from the wall on level ground. How high up the wall does the ladder reach?",
     marks: 3,
     markingPoints: [
@@ -75,6 +78,7 @@ export const ITEMS: Item[] = [
     subject: "Combined Science",
     level: "Form 2",
     topic: "Photosynthesis",
+    explore: "photosynthesis in crops and forests",
     question: "Write the word equation for photosynthesis, and name two conditions a plant needs for it to happen.",
     marks: 4,
     markingPoints: [
@@ -95,6 +99,7 @@ export const ITEMS: Item[] = [
     subject: "Physics",
     level: "Form 3",
     topic: "Speed",
+    explore: "average speed of a journey from distance and time",
     question: "A minibus travels 150 km from Harare in 2.5 hours. Calculate its average speed in km/h.",
     marks: 2,
     markingPoints: [
@@ -114,6 +119,7 @@ export const ITEMS: Item[] = [
     subject: "Geography",
     level: "Form 3",
     topic: "Land degradation",
+    explore: "soil erosion and conservation farming in Zimbabwe",
     question: "Give three ways farmers in communal areas can reduce soil erosion on sloping land.",
     marks: 3,
     pointsNeeded: 3,
@@ -141,6 +147,7 @@ export const ITEMS: Item[] = [
     subject: "History",
     level: "Form 2",
     topic: "Great Zimbabwe",
+    explore: "Great Zimbabwe ruins, history and trade",
     question: "Explain two reasons why the Great Zimbabwe state declined.",
     marks: 4,
     pointsNeeded: 2,
@@ -165,6 +172,7 @@ export const ITEMS: Item[] = [
     subject: "English Language",
     level: "Form 2",
     topic: "Figures of speech",
+    explore: "personification in poems and stories",
     question: "Identify the figure of speech in this sentence and explain its effect: “The wind whispered through the msasa trees.”",
     marks: 3,
     markingPoints: [
@@ -185,6 +193,7 @@ export const ITEMS: Item[] = [
     subject: "Principles of Accounting",
     level: "Form 3",
     topic: "The accounting equation",
+    explore: "assets, liabilities and owner's capital in a small business",
     question: "A tuck-shop has assets of US\\$12 000 and liabilities of US\\$4 500. Calculate the owner's capital.",
     marks: 2,
     markingPoints: [
@@ -203,6 +212,7 @@ export const ITEMS: Item[] = [
     subject: "Computer Science",
     level: "Form 3",
     topic: "Number systems",
+    explore: "how computers use binary numbers",
     question: "Convert the denary number 37 to binary.",
     marks: 2,
     markingPoints: [
@@ -221,6 +231,7 @@ export const ITEMS: Item[] = [
     subject: "Mathematics",
     level: "Form 1",
     topic: "Ratio",
+    explore: "ratio in cooking recipes and mixing concrete",
     question: "Tendai and Rudo share US\\$60 in the ratio $2 : 3$. How much does Rudo get?",
     marks: 2,
     markingPoints: [
@@ -240,6 +251,7 @@ export const ITEMS: Item[] = [
     subject: "Mathematics",
     level: "Form 2",
     topic: "Circles",
+    explore: "circumference of circles in wheels and everyday objects",
     question: "A round table top has a radius of 14 cm. Calculate its circumference. Use $\\pi = \\frac{22}{7}$.",
     marks: 2,
     markingPoints: [
@@ -259,6 +271,7 @@ export const ITEMS: Item[] = [
     subject: "Mathematics",
     level: "Form 3",
     topic: "Probability",
+    explore: "probability and chance in weather forecasts, such as the chance of rain",
     question: "A bag contains 3 red beads and 5 blue beads. Tariro takes one bead without looking. What is the probability that it is red?",
     marks: 2,
     markingPoints: [
@@ -277,6 +290,7 @@ export const ITEMS: Item[] = [
     subject: "Mathematics",
     level: "Form 4",
     topic: "Simple interest",
+    explore: "simple interest on savings accounts and loans",
     question: "Mrs Moyo puts US\\$800 in a savings account that pays 5% simple interest per year. How much interest will she earn in 3 years?",
     marks: 2,
     markingPoints: [
@@ -296,6 +310,7 @@ export const ITEMS: Item[] = [
     subject: "Combined Science",
     level: "Form 2",
     topic: "Heat transfer",
+    explore: "heat conduction in cooking pots and pans",
     question: "A metal spoon is left standing in a pot of hot sadza. After a few minutes its handle feels hot. Explain why.",
     marks: 3,
     pointsNeeded: 2,
@@ -320,6 +335,7 @@ export const ITEMS: Item[] = [
     subject: "Physics",
     level: "Form 3",
     topic: "Work and energy",
+    explore: "work and energy when lifting and pushing loads",
     question: "A learner pushes a box across the floor with a force of 50 N. The box moves 4 m. Calculate the work done.",
     marks: 2,
     markingPoints: [
@@ -339,6 +355,7 @@ export const ITEMS: Item[] = [
     subject: "Geography",
     level: "Form 1",
     topic: "Water resources",
+    explore: "Kariba Dam hydro-electric power and Lake Kariba kapenta fishing",
     question: "Explain two ways the Kariba Dam on the Zambezi River is important to Zimbabwe.",
     marks: 4,
     pointsNeeded: 2,
@@ -363,6 +380,7 @@ export const ITEMS: Item[] = [
     subject: "History",
     level: "Form 3",
     topic: "The First Chimurenga",
+    explore: "the First Chimurenga of 1896, Mbuya Nehanda and Sekuru Kaguvi",
     question: "Give two reasons why the Ndebele and Shona rose against the settlers in the First Chimurenga of 1896–97.",
     marks: 4,
     pointsNeeded: 2,
@@ -389,6 +407,7 @@ export const ITEMS: Item[] = [
     subject: "English Language",
     level: "Form 1",
     topic: "Verb tenses",
+    explore: "irregular past tense verbs in English",
     question: "Rewrite this sentence in the simple past tense: “Chipo walks to school and buys a mango.”",
     marks: 2,
     markingPoints: [
@@ -407,6 +426,7 @@ export const ITEMS: Item[] = [
     subject: "Principles of Accounting",
     level: "Form 2",
     topic: "Profit and loss",
+    explore: "profit and loss when a shop buys and sells goods",
     question: "A trader buys goods for US\\$250 and sells them for US\\$320. Calculate the profit as a percentage of the cost price.",
     marks: 3,
     markingPoints: [
@@ -427,6 +447,7 @@ export const ITEMS: Item[] = [
     subject: "Computer Science",
     level: "Form 2",
     topic: "Number systems",
+    explore: "binary numbers in computers and digital data",
     question: "Convert the binary number 1101 to denary.",
     marks: 2,
     markingPoints: [

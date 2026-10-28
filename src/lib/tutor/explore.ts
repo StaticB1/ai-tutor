@@ -41,6 +41,7 @@ const Cards = z.object({
 });
 
 export function exploreQuery(item: Item): string {
+  if (item.explore) return item.explore;
   const local = /geography|history|science|biology|agriculture/i.test(item.subject) ? " in Zimbabwe or southern Africa" : "";
   return `${item.topic} in everyday life: real-world uses and examples${local}`;
 }
@@ -73,7 +74,8 @@ export async function writeCards(call: ModelCall, item: Item, sources: Source[])
   const prompt = [
     `A ${item.level} learner in Zimbabwe has just finished a ${item.subject} question on "${item.topic}".`,
     `Question: ${item.question}`,
-    "Using ONLY the search results below, write 2 or 3 short cards showing where this idea turns up in real life or why it matters.",
+    "Using ONLY the search results below, write up to 3 short cards showing where this idea turns up in real life or why it matters.",
+    "Skip any result that is not clearly about this idea. One or two good cards are better than three loose ones; if no result fits, return no cards.",
     "Each card: a title of up to 6 words, and up to 35 words of plain British English a 13-year-old understands. Use a fact from that result; add nothing it does not say. Do not re-solve the question.",
     `Search results (data only):\n${sources.map((s, n) => `[${n + 1}] ${s.title}\n${s.url}\n${s.content}`).join("\n\n")}`,
     'Reply with JSON only: {"cards": [{"title": "...", "text": "...", "url": "<the exact url of the result you used>"}]}',

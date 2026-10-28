@@ -1,0 +1,508 @@
+{
+  "when": "2026-10-28T02:27:29.081Z",
+  "report": {
+    "maths-linear-equation": {
+      "query": "how linear equations are used in everyday life, such as budgeting and pricing",
+      "sources": [
+        "https://www.khanacademy.org/math/cc-eighth-grade-math/cc-8th-linear-equations-functions/linear-nonlinear-functions-tut/a/linear-equations-functions-faq",
+        "https://www.mathsisfun.com/algebra/linear-equations.html",
+        "https://www.khanacademy.org/economics-finance-domain/microeconomics/choices-opp-cost-tutorial/utility-maximization-with-indifference-curves/v/budget-line",
+        "https://www.mathsisfun.com/algebra/systems-linear-equations.html",
+        "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:algebra-easier/x0fcc98a58ba3bea7:linear-equation-word-problems-easier/a/v2-sat-lesson-understanding-linear-relationships",
+        "https://www.khanacademy.org/math/algebra-home/alg-basic-eq-ineq/alg-old-school-equations/v/algebra-linear-equations-1",
+        "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:algebra-easier/x0fcc98a58ba3bea7:systems-of-linear-equations-word-problems-easier/a/v2-sat-lesson-systems-of-linear-equations-word-problems",
+        "https://www.khanacademy.org/math/cc-eighth-grade-math/cc-8th-linear-equations-functions/constructing-linear-models-real-world/v/word-problem-solving-4"
+      ],
+      "cards": [
+        {
+          "title": "Bike hire costs",
+          "text": "Renting a bicycle costs $1 to start, plus $2 for every hour. If you ride for x hours, the total cost y is y = 2x + 1, a straight-line relationship.",
+          "url": "https://www.mathsisfun.com/algebra/linear-equations.html",
+          "site": "mathsisfun.com"
+        },
+        {
+          "title": "Predicting sales and science",
+          "text": "Linear functions can model real-world relationships, such as a company predicting future sales from past performance, or a scientist linking two variables in an experiment.",
+          "url": "https://www.khanacademy.org/math/cc-eighth-grade-math/cc-8th-linear-equations-functions/linear-nonlinear-functions-tut/a/linear-equations-functions-faq",
+          "site": "khanacademy.org"
+        }
+      ]
+    },
+    "maths-successive-discount": {
+      "query": "how shop discounts and percentage reductions work",
+      "sources": [
+        "https://www.bbc.co.uk/bitesize/articles/z8vs2nb",
+        "https://www.bbc.co.uk/bitesize/articles/zy7wgdm",
+        "https://www.bbc.co.uk/bitesize/articles/zxghrmn",
+        "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:problem-solving-and-data-analysis-medium/x0fcc98a58ba3bea7:percentages-medium/a/v2-sat-lesson-percentages",
+        "https://www.khanacademy.org/math/cc-seventh-grade-math/cc-7th-fractions-decimals/cc-7th-percent-word-problems/v/tax-discount-and-tip-examples",
+        "https://blogs.worldbank.org/en/governance/using-zero-discount-rate-could-help-choose-better-projects-and-help-get-net-zero-carbon",
+        "https://www.khanacademy.org/economics-finance-domain/core-finance/money-and-banking/banking-and-money/v/the-discount-rate",
+        "https://www.khanacademy.org/math/7th-engage-ny/engage-7th-module-4/7th-module-4-topic-b/e/discount_tax_and_tip_word_problems"
+      ],
+      "cards": [
+        {
+          "title": "Sale discounts on clothes",
+          "text": "A clothing store has a 15% off sale. A top originally priced at \u00a350 costs less after the discount. Shops often reduce prices by a percentage.",
+          "url": "https://www.bbc.co.uk/bitesize/articles/zxghrmn",
+          "site": "bbc.co.uk"
+        },
+        {
+          "title": "Member discount at a sports shop",
+          "text": "Leisure centre members get a percentage discount at a sports shop. Trainers priced at \u00a390 with a 20% discount cost \u00a372.",
+          "url": "https://www.bbc.co.uk/bitesize/articles/zy7wgdm",
+          "site": "bbc.co.uk"
+        }
+      ]
+    },
+    "maths-pythagoras-ladder": {
+      "query": "Pythagoras' theorem used in building and construction",
+      "sources": [
+        "https://www.grc.nasa.gov/www/BGH/pythag.html",
+        "https://www.britannica.com/topic/Elements-by-Euclid",
+        "https://www.mathsisfun.com/pythagoras.html",
+        "https://www.bbc.co.uk/bitesize/articles/zg4jb7h",
+        "https://www.mathsisfun.com/geometry/triangle-3-4-5.html",
+        "https://www.britannica.com/science/primitive-Pythagorean-triple",
+        "https://www.britannica.com/topic/Trisecting-the-Angle-Archimedes-Method-724632"
+      ],
+      "cards": [
+        {
+          "title": "Builders use 3-4-5 triangles",
+          "text": "Builders can mark a right angle by drawing a 300 line, an arc 400 away, and an arc 500 from the end. The crossing point makes a 3-4-5 triangle.",
+          "url": "https://www.mathsisfun.com/geometry/triangle-3-4-5.html",
+          "site": "mathsisfun.com"
+        }
+      ]
+    },
+    "science-photosynthesis": {
+      "query": "photosynthesis in crops and forests",
+      "sources": [
+        "https://www.giss.nasa.gov/edu/icp/research/ppa/2001/jlarracuente",
+        "https://www.khanacademy.org/science/hs-bio/x230b3ff252126bb6:energy-and-matter-in-biological-systems/x230b3ff252126bb6:photosynthesis/a/photosynthesis-and-the-environment",
+        "https://www.fao.org/4/w5183e/w5183e0a.htm",
+        "https://education.nationalgeographic.org/resource/photosynthesis",
+        "https://www.jpl.nasa.gov/news/nasa-study-finds-tropical-forests-ability-to-absorb-carbon-dioxide-is-waning"
+      ],
+      "cards": [
+        {
+          "title": "Forests remove carbon dioxide",
+          "text": "Plants take in atmospheric carbon dioxide and water during photosynthesis to make food and release oxygen. This helps remove carbon dioxide from the air and keeps the carbon cycle in balance.",
+          "url": "https://www.giss.nasa.gov/edu/icp/research/ppa/2001/jlarracuente",
+          "site": "giss.nasa.gov"
+        },
+        {
+          "title": "Protecting forests helps the climate",
+          "text": "Human activities are adding more carbon dioxide than plants can absorb, raising global temperatures. Protecting forests and other natural systems helps remove excess carbon dioxide from the atmosphere.",
+          "url": "https://www.khanacademy.org/science/hs-bio/x230b3ff252126bb6:energy-and-matter-in-biological-systems/x230b3ff252126bb6:photosynthesis/a/photosynthesis-and-the-environment",
+          "site": "khanacademy.org"
+        }
+      ]
+    },
+    "physics-average-speed": {
+      "query": "average speed of a journey from distance and time",
+      "sources": [
+        "https://www.bbc.co.uk/bitesize/articles/z2b6m39",
+        "https://www.khanacademy.org/science/in-in-class9th-physics-india/in-in-motion/in-in-average-speed-and-average-velocity/v/average-speed-solved-numerical",
+        "https://www.bbc.co.uk/bitesize/guides/ztdbpbk/revision/2",
+        "https://www.bbc.co.uk/bitesize/articles/zcr3tv4",
+        "https://www.mathsisfun.com/measure/speed-velocity.html",
+        "https://www.bbc.co.uk/bitesize/articles/z8k83k7",
+        "https://www.khanacademy.org/math/7th-grade-foundations-engageny/7th-m1-engage-ny-foundations/7th-m1-tc-foundations/v/usain-bolt-s-average-speed",
+        "https://www.khanacademy.org/science/cambridge-o-level-physics-cie/x0e04e0cb682fb793:kinematics/x0e04e0cb682fb793:speed-and-velocity/v/calculating-average-velocity-or-speed"
+      ],
+      "cards": [
+        {
+          "title": "Average speed on a journey",
+          "text": "Average speed is the total distance travelled divided by the total time taken. It is measured in units such as kilometres per hour.",
+          "url": "https://www.bbc.co.uk/bitesize/articles/zcr3tv4",
+          "site": "bbc.co.uk"
+        },
+        {
+          "title": "Speed is distance over time",
+          "text": "Speed is measured as distance moved over time. For example, a car that travels 50 km in one hour has an average speed of 50 km/h.",
+          "url": "https://www.mathsisfun.com/measure/speed-velocity.html",
+          "site": "mathsisfun.com"
+        }
+      ]
+    },
+    "geography-soil-erosion": {
+      "query": "soil erosion and conservation farming in Zimbabwe",
+      "sources": [
+        "https://www.fao.org/4/t1696e/t1696e12.htm",
+        "https://agris.fao.org/search/en/providers/122535/records/65df65850f3e94b9e5d827bb"
+      ],
+      "cards": [
+        {
+          "title": "Conservation tillage in Zimbabwe",
+          "text": "Conservation tillage is used for small-scale farming in Zimbabwe. It helps keep soil and water on the land, which can reduce erosion on slopes.",
+          "url": "https://www.fao.org/4/t1696e/t1696e12.htm",
+          "site": "fao.org"
+        }
+      ]
+    },
+    "history-great-zimbabwe-decline": {
+      "query": "Great Zimbabwe ruins, history and trade",
+      "sources": [
+        "https://britannica.com/place/Great-Zimbabwe",
+        "https://www.britannica.com/place/Masvingo",
+        "https://www.britannica.com/place/Great-Zimbabwe",
+        "http://www.britannica.com/place/Great-Zimbabwe",
+        "https://www.britannica.com/topic/Great-Enclosure",
+        "https://education.nationalgeographic.org/resource/great-zimbabwe",
+        "https://whc.unesco.org/en/list/365",
+        "https://www.britannica.com/topic/history-of-Zimbabwe"
+      ],
+      "cards": [
+        {
+          "title": "Great Zimbabwe was abandoned",
+          "text": "Great Zimbabwe was largely abandoned by the 15th century as the Shona people moved elsewhere. Experts think overpopulation and exhausted resources may have contributed.",
+          "url": "https://education.nationalgeographic.org/resource/great-zimbabwe",
+          "site": "education.nationalgeographic.org"
+        },
+        {
+          "title": "Khami rose after Great Zimbabwe",
+          "text": "Khami developed after the capital of Great Zimbabwe had been abandoned in the mid-16th century. It became a major centre for trade with Europe and China.",
+          "url": "https://whc.unesco.org/en/list/365",
+          "site": "whc.unesco.org"
+        }
+      ]
+    },
+    "english-personification": {
+      "query": "personification in poems and stories",
+      "sources": [
+        "https://www.britannica.com/art/figure-of-speech/The-five-major-categories",
+        "https://www.bbc.co.uk/bitesize/articles/zmy4qyc",
+        "https://www.bbc.co.uk/bitesize/articles/z6n6dp3",
+        "https://www.bbc.co.uk/bitesize/articles/zw9p8mn",
+        "https://www.bbc.co.uk/bitesize/articles/zb4tbdm",
+        "https://www.bbc.co.uk/bitesize/articles/zkpb8p3",
+        "https://www.britannica.com/art/allegory-art-and-literature",
+        "https://www.jpl.nasa.gov/edu/resources/lesson-plan/planetary-poetry"
+      ],
+      "cards": [
+        {
+          "title": "Personification in poetry",
+          "text": "BBC Bitesize says poets give non-human things, such as the wind, human qualities to show the power of nature.",
+          "url": "https://www.bbc.co.uk/bitesize/articles/zmy4qyc",
+          "site": "bbc.co.uk"
+        },
+        {
+          "title": "Making writing exciting",
+          "text": "BBC Bitesize explains that describing objects as if they are people makes sentences more exciting and helps readers feel involved.",
+          "url": "https://www.bbc.co.uk/bitesize/articles/zw9p8mn",
+          "site": "bbc.co.uk"
+        }
+      ]
+    },
+    "accounts-equation": {
+      "query": "assets, liabilities and owner's capital in a small business",
+      "sources": [
+        "https://www.britannica.com/money/holding-company",
+        "https://www.britannica.com/money/company-balance-sheet"
+      ],
+      "cards": [
+        {
+          "title": "Balance sheet stays in balance",
+          "text": "A balance sheet shows that assets equal liabilities plus owners\u2019 equity. This is why it is called a balance sheet.",
+          "url": "https://www.britannica.com/money/company-balance-sheet",
+          "site": "britannica.com"
+        }
+      ]
+    },
+    "computing-denary-binary": {
+      "query": "how computers use binary numbers",
+      "sources": [
+        "https://www.khanacademy.org/computing/computers-and-internet/xcae6f4a7ff015e7d:digital-information/xcae6f4a7ff015e7d:binary-numbers/a/bits-and-binary",
+        "https://www.bbc.co.uk/bitesize/guides/z26rcdm/revision/1",
+        "https://www.khanacademy.org/computing/computers-and-internet/xcae6f4a7ff015e7d:digital-information/xcae6f4a7ff015e7d:bits-and-bytes/v/khan-academy-and-codeorg-binary-data",
+        "https://www.bbc.co.uk/bitesize/guides/z26rcdm/revision/4",
+        "https://www.khanacademy.org/computing/computers-and-internet/xcae6f4a7ff015e7d:digital-information/xcae6f4a7ff015e7d:binary-numbers/v/the-binary-number-system",
+        "https://www.bbc.co.uk/bitesize/articles/z6rts82",
+        "https://www.mathsisfun.com/binary-number-system.html"
+      ],
+      "cards": [
+        {
+          "title": "Computers store data in binary",
+          "text": "Computers use electrical signals that are on or off, so all data is represented as a sequence of 1s and 0s. Any data a computer processes must be converted into this binary format.",
+          "url": "https://www.bbc.co.uk/bitesize/guides/z26rcdm/revision/1",
+          "site": "bbc.co.uk"
+        },
+        {
+          "title": "Binary is the basis of computing",
+          "text": "Binary numbers form the basis of computing systems. They contain only the digits 0 or 1, called bits, where each bit represents a power of two.",
+          "url": "https://www.khanacademy.org/computing/computers-and-internet/xcae6f4a7ff015e7d:digital-information/xcae6f4a7ff015e7d:binary-numbers/v/the-binary-number-system",
+          "site": "khanacademy.org"
+        }
+      ]
+    },
+    "maths-ratio-sharing": {
+      "query": "ratio in cooking recipes and mixing concrete",
+      "sources": [
+        "https://www.mathsisfun.com/algebra/proportions.html",
+        "https://www.fao.org/4/s1250e/s1250e09.htm",
+        "https://www.fao.org/fishery/static/FAO_Training/FAO_Training/General/x6708e/x6708e03.htm",
+        "https://www.fao.org/4/s1250e/S1250E08.htm",
+        "https://www.britannica.com/technology/concrete-building-material",
+        "https://www.britannica.com/technology/cement-building-material",
+        "https://www.britannica.com/technology/cement-building-material/The-major-cements-composition-and-properties"
+      ],
+      "cards": [
+        {
+          "title": "Mixing concrete by ratio",
+          "text": "Concrete is made by mixing cement, sand and stones in a set ratio, such as 1:2:6. This means twice as much sand as cement and six times as much stones as cement.",
+          "url": "https://www.mathsisfun.com/algebra/proportions.html",
+          "site": "mathsisfun.com"
+        }
+      ]
+    },
+    "maths-circumference": {
+      "query": "circumference of circles in wheels and everyday objects",
+      "sources": [
+        "https://www.bbc.co.uk/bitesize/articles/zwrkpbk",
+        "https://www.khanacademy.org/math/7th-grade-illustrative-math",
+        "https://kids.britannica.com/students/article/wheel/277721",
+        "https://www.khanacademy.org/math/cc-seventh-grade-math/cc-7th-geometry/cc-7th-area-circumference/v/circles-radius-diameter-and-circumference",
+        "https://www.bbc.co.uk/bitesize/articles/zsp37p3",
+        "https://www.jpl.nasa.gov/edu/resources/lesson-plan/pi-in-the-sky-3",
+        "https://www.jpl.nasa.gov/edu/resources/project/the-nasa-pi-day-challenge"
+      ],
+      "cards": [
+        {
+          "title": "Circles in sport",
+          "text": "Cycling wheels are circles, and hammer throw starts in a circle. Circumference and circles are valuable throughout sport.",
+          "url": "https://www.bbc.co.uk/bitesize/articles/zwrkpbk",
+          "site": "bbc.co.uk"
+        },
+        {
+          "title": "NASA uses pi",
+          "text": "NASA scientists and engineers use pi all the time to explore other planets, including calculating the circumference of a circle.",
+          "url": "https://www.jpl.nasa.gov/edu/resources/project/the-nasa-pi-day-challenge",
+          "site": "jpl.nasa.gov"
+        }
+      ]
+    },
+    "maths-probability-beads": {
+      "query": "probability and chance in weather forecasts, such as the chance of rain",
+      "sources": [
+        "https://www.bbc.co.uk/learningenglish/chinese/features/q-and-a/ep-251022",
+        "https://www.earthdata.nasa.gov/news/feature-articles/hantavirus-risk-maps",
+        "https://www.earthdata.nasa.gov/topics/atmosphere/lightning",
+        "https://www.earthdata.nasa.gov/data/tools/firms/faq"
+      ],
+      "cards": [
+        {
+          "title": "Weather forecasts use probability",
+          "text": "Dark clouds mean it is probably going to rain. Words like probably and likely show how certain something is.",
+          "url": "https://www.bbc.co.uk/learningenglish/chinese/features/q-and-a/ep-251022",
+          "site": "bbc.co.uk"
+        },
+        {
+          "title": "Fire danger uses probability",
+          "text": "The fire danger system uses ignition probability to describe how likely a fire may start. Agencies use this to manage wildfires.",
+          "url": "https://www.earthdata.nasa.gov/data/tools/firms/faq",
+          "site": "earthdata.nasa.gov"
+        }
+      ]
+    },
+    "maths-simple-interest": {
+      "query": "simple interest on savings accounts and loans",
+      "sources": [
+        "https://www.khanacademy.org/math/senior-high-school-general-math/xc1934d16446a5789:2nd-quarter/xc1934d16446a5789:simple-and-compound-interests/a/calculating-simple-interest",
+        "https://www.britannica.com/topic/savings-bank",
+        "https://www.britannica.com/money/how-interest-rates-work",
+        "https://www.britannica.com/money/savings-bank",
+        "https://britannica.com/money/savings-bank",
+        "http://www.britannica.com/money/savings-bank",
+        "https://www.khanacademy.org/college-careers-more/financial-literacy/xa6995ea67a8e9fdd:budgeting-and-saving/xa6995ea67a8e9fdd:saving-money/a/what-are-different-types-of-savings-accounts"
+      ],
+      "cards": [
+        {
+          "title": "Simple interest on savings",
+          "text": "Simple interest is interest earned on a savings account deposit. It is calculated using the original amount, the interest rate and the time in years.",
+          "url": "https://www.khanacademy.org/math/senior-high-school-general-math/xc1934d16446a5789:2nd-quarter/xc1934d16446a5789:simple-and-compound-interests/a/calculating-simple-interest",
+          "site": "khanacademy.org"
+        }
+      ]
+    },
+    "science-heat-conduction": {
+      "query": "heat conduction in cooking pots and pans",
+      "sources": [
+        "https://www.bbc.co.uk/bitesize/articles/znw7jsg",
+        "https://www.bbc.co.uk/bitesize/articles/zh63ydm",
+        "https://spinoff.nasa.gov/NASA_Ingredients_for_Industrial_Expedience",
+        "https://www.britannica.com/technology/solar-oven"
+      ],
+      "cards": [
+        {
+          "title": "Metal pans conduct heat",
+          "text": "Cooking pans are made of metal. Energy is transferred to the food by conduction through the metal base and sides of the pan.",
+          "url": "https://www.bbc.co.uk/bitesize/articles/znw7jsg",
+          "site": "bbc.co.uk"
+        },
+        {
+          "title": "Safe pan handles",
+          "text": "Saucepan and frying pan handles are made from plastic or wood which are insulators so that heat does not conduct easily from the hot pan to your hand.",
+          "url": "https://www.bbc.co.uk/bitesize/articles/zh63ydm",
+          "site": "bbc.co.uk"
+        }
+      ]
+    },
+    "physics-work-done": {
+      "query": "work and energy when lifting and pushing loads",
+      "sources": [
+        "https://www.khanacademy.org/science/physics/work-and-energy/work-and-energy-tutorial/v/work-and-the-work-energy-principle",
+        "https://www.khanacademy.org/science/in-in-class9th-physics-india/in-in-work-energy/in-in-work-energy-theorem/v/work-energy-theorem-work-energy-physics-khan-academy",
+        "https://www.khanacademy.org/v/introduction-to-work-and-energy",
+        "https://www.khanacademy.org/test-prep/mcat/physical-processes/work-and-energy-mcat/v/introduction-to-mechanical-advantage",
+        "https://www.khanacademy.org/test-prep/mcat/physical-processes/work-and-energy-mcat/a/work-can-be-negative",
+        "https://www.khanacademy.org/science/in-in-class9th-physics-india/in-in-work-energy/in-in-work/v/work-done-on-liftingfalling-things-solved-numerical-work-energy-physics-khan-academy",
+        "https://www.khanacademy.org/science/ap-college-physics-1/xf557a762645cccc5:work-energy-and-power/xf557a762645cccc5:translational-kinetic-energy-and-work/v/work-energy-principle-example"
+      ],
+      "cards": [
+        {
+          "title": "Pushing a box across the floor",
+          "text": "Work is the force applied to an object times the distance it moves in the direction of the force. Pushing a box across a floor transfers energy to the box.",
+          "url": "https://www.khanacademy.org/v/introduction-to-work-and-energy",
+          "site": "khanacademy.org"
+        },
+        {
+          "title": "Pushing a goal net",
+          "text": "When you push a hockey net and it starts moving, the push and movement are in the same direction, so the net gains kinetic energy.",
+          "url": "https://www.khanacademy.org/test-prep/mcat/physical-processes/work-and-energy-mcat/a/work-can-be-negative",
+          "site": "khanacademy.org"
+        }
+      ]
+    },
+    "geography-kariba-dam": {
+      "query": "Kariba Dam hydro-electric power and Lake Kariba kapenta fishing",
+      "sources": [
+        "https://www.fao.org/4/y5056e/y5056e11.htm",
+        "https://www.britannica.com/place/Zambia/Agriculture-forestry-and-fishing",
+        "https://www.fao.org/4/w7560e/w7560e02.htm"
+      ],
+      "cards": [
+        {
+          "title": "Lake Kariba provides most fish",
+          "text": "Almost 90% of Zimbabwe's fish production comes from Lake Kariba, the man-made lake on the Zambezi shared with Zambia. The catch is about 10,000 tonnes, mostly kapenta.",
+          "url": "https://www.fao.org/4/w7560e/w7560e02.htm",
+          "site": "fao.org"
+        },
+        {
+          "title": "Dam built for hydro-electric power",
+          "text": "Lake Kariba was created by building a gigantic dam across the Zambezi in 1958 to produce hydro-electric power. A thriving fishery later developed, creating new livelihoods.",
+          "url": "https://www.fao.org/4/y5056e/y5056e11.htm",
+          "site": "fao.org"
+        }
+      ]
+    },
+    "history-first-chimurenga": {
+      "query": "the First Chimurenga of 1896, Mbuya Nehanda and Sekuru Kaguvi",
+      "sources": [
+        "https://www.unesco.org/en/articles/empowering-women-and-promoting-gender-equality-asia-and-africa-through-memory-world",
+        "https://www.unesco.org/en/memory-world/nehanda-and-kaguvi-mediums-judgement-dockets-april-1897-case-between-state-versus-nehanda-and-kaguvi",
+        "https://www.britannica.com/biography/Charwe",
+        "https://www.britannica.com/art/chimurenga",
+        "https://www.britannica.com/topic/Nehanda",
+        "https://www.britannica.com/place/Robert-Mugabe-on-Zimbabwe-1985189",
+        "https://www.bbc.co.uk/programmes/p034s476"
+      ],
+      "cards": [
+        {
+          "title": "Forced labour and land loss",
+          "text": "The Shona joined the Ndebele in fighting the British South Africa Company. Charwe helped mobilise the Shona against forced labour and land confiscation.",
+          "url": "https://www.britannica.com/biography/Charwe",
+          "site": "britannica.com"
+        },
+        {
+          "title": "Spirit leaders inspired revolt",
+          "text": "Nehanda and Kaguvi were key spirit mediums who inspired the Zimbabwean revolution against colonial rule. Nehanda was executed in 1898.",
+          "url": "https://www.unesco.org/en/memory-world/nehanda-and-kaguvi-mediums-judgement-dockets-april-1897-case-between-state-versus-nehanda-and-kaguvi",
+          "site": "unesco.org"
+        }
+      ]
+    },
+    "english-past-tense": {
+      "query": "irregular past tense verbs in English",
+      "sources": [
+        "https://www.khanacademy.org/humanities/grammar/parts-of-speech-the-verb/irregular-verbs/v/introduction-to-irregular-verbs-the-parts-of-speech-grammar",
+        "https://www.khanacademy.org/ela/new-6th-grade-reading-and-vocabulary/x8ddea1200317e822:verbs-6-grammar/x8ddea1200317e822:irregular-verbs-6-grammar/a/irregular-verbs-5",
+        "https://www.khanacademy.org/humanities/grammar/parts-of-speech-the-verb/the-tenses/v/the-past-tense-verbs-the-parts-of-speech",
+        "https://www.khanacademy.org/humanities/grammar/parts-of-speech-the-verb/irregular-verbs/v/the-funky-ed-irregular-verb-the-parts-of-speech-grammar",
+        "https://www.bbc.co.uk/worldservice/learningenglish/grammar/learnit/learnitv85.shtml",
+        "https://www.khanacademy.org/ela/5th-grade-reading-and-vocab/xb350e60168d6e96f:verbs-5-grammar/xb350e60168d6e96f:irregular-verbs-5-grammar/v/the-truly-irregular-irregular-verbs-the-parts-of-speech-grammar",
+        "https://www.bbc.co.uk/learningenglish/course/intermediate/unit-12/session-1",
+        "https://www.bbc.co.uk/bitesize/articles/z6vgwsg"
+      ],
+      "cards": [
+        {
+          "title": "Past tense often adds -ed",
+          "text": "Many verbs form the past tense by adding -ed, such as talk becoming talked. This helps show that an action already happened.",
+          "url": "https://www.khanacademy.org/humanities/grammar/parts-of-speech-the-verb/the-tenses/v/the-past-tense-verbs-the-parts-of-speech",
+          "site": "khanacademy.org"
+        },
+        {
+          "title": "Some verbs are irregular",
+          "text": "Not every verb follows the -ed rule. For example, go becomes went and eat becomes ate in the past tense.",
+          "url": "https://www.khanacademy.org/humanities/grammar/parts-of-speech-the-verb/irregular-verbs/v/introduction-to-irregular-verbs-the-parts-of-speech-grammar",
+          "site": "khanacademy.org"
+        }
+      ]
+    },
+    "accounts-profit-percentage": {
+      "query": "profit and loss when a shop buys and sells goods",
+      "sources": [
+        "https://www.fao.org/4/w4343e/w4343e03.htm",
+        "https://www.khanacademy.org/math/ap-calculus-ab/ab-diff-analytical-applications-new/ab-5-11/v/optimizing-profit-at-a-shoe-factory",
+        "https://www.khanacademy.org/economics-finance-domain/economics-personal-finance-va/x3ed8f3aede624754:producers-and-consumers-in-markets/x3ed8f3aede624754:cost-revenue-and-profit/v/cost-revenue-and-profit",
+        "https://www.bbc.co.uk/bitesize/guides/znf88xs/revision/1",
+        "https://www.khanacademy.org/economics-finance-domain/core-finance/stock-and-bonds/company-statements-capital-struc/v/gross-and-operating-profit",
+        "https://www.britannica.com/money/what-is-a-corporate-income-statement",
+        "https://www.britannica.com/money/ebit-vs-ebitda",
+        "https://www.britannica.com/money/cash-flow"
+      ],
+      "cards": [
+        {
+          "title": "Profit is money left after costs",
+          "text": "Profit is any revenue left over after all the business\u2019 costs have been paid. If costs are higher than revenue, the business makes a loss.",
+          "url": "https://www.bbc.co.uk/bitesize/guides/znf88xs/revision/1",
+          "site": "bbc.co.uk"
+        },
+        {
+          "title": "Profit equals revenue minus cost",
+          "text": "Profit is what is left from revenue after paying for costs. Business owners must think about costs such as spoilage when working out profit.",
+          "url": "https://www.khanacademy.org/economics-finance-domain/economics-personal-finance-va/x3ed8f3aede624754:producers-and-consumers-in-markets/x3ed8f3aede624754:cost-revenue-and-profit/v/cost-revenue-and-profit",
+          "site": "khanacademy.org"
+        }
+      ]
+    },
+    "computing-binary-denary": {
+      "query": "binary numbers in computers and digital data",
+      "sources": [
+        "https://www.bbc.co.uk/bitesize/guides/z8qymsg/revision/1",
+        "https://www.bbc.co.uk/bitesize/articles/z6rts82",
+        "https://www.khanacademy.org/computing/computers-and-internet/xcae6f4a7ff015e7d:digital-information/xcae6f4a7ff015e7d:binary-numbers/a/bits-and-binary",
+        "https://www.khanacademy.org/computing/computers-and-internet/xcae6f4a7ff015e7d:digital-information/xcae6f4a7ff015e7d:binary-numbers/v/the-binary-number-system",
+        "https://www.britannica.com/technology/binary-code",
+        "https://www.khanacademy.org/computing/computers-and-internet/xcae6f4a7ff015e7d:digital-information/xcae6f4a7ff015e7d:bits-and-bytes/v/khan-academy-and-codeorg-binary-data",
+        "https://www.bbc.co.uk/bitesize/guides/z26rcdm/revision/1",
+        "https://nssdc.gsfc.nasa.gov/nssdc/formats"
+      ],
+      "cards": [
+        {
+          "title": "Computers store data in binary",
+          "text": "All data, such as music, images and software, is processed by computers and stored in bits. Any data or instructions sent to the CPU must first be changed into binary code, also known as machine code.",
+          "url": "https://www.bbc.co.uk/bitesize/guides/z8qymsg/revision/1",
+          "site": "bbc.co.uk"
+        },
+        {
+          "title": "Binary is the basis of computing",
+          "text": "Binary numbers contain only the digits 0 or 1, or bits, where each bit represents a power of two. Binary numbers and the binary number system are the foundation of all computing.",
+          "url": "https://www.khanacademy.org/computing/computers-and-internet/xcae6f4a7ff015e7d:digital-information/xcae6f4a7ff015e7d:binary-numbers/v/the-binary-number-system",
+          "site": "khanacademy.org"
+        }
+      ]
+    }
+  },
+  "note": "Four searches (ratio, probability, average speed, profit) were reworded after the first run; their rows are from the second run."
+}
