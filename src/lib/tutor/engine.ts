@@ -2,7 +2,7 @@
 // wording for leaks, and fall back to a pre-written hint if it still gives something away.
 
 import { assess } from "./assess";
-import { checkReply, codeLeaks } from "./guard";
+import { checkReply, codeLeaks, namesPoint } from "./guard";
 import type { Message, ModelCall, Usage } from "./model";
 import { KEEP_TO_TOPIC_REPLY, SAFEGUARDING_REPLY, screen } from "./safety";
 import type { Assessment, ChatTurn, Item, Move, TutorState } from "./types";
@@ -121,12 +121,17 @@ export function tutorMessages(item: Item, state: TutorState, history: ChatTurn[]
     move.kind === "welcome" || move.kind === "reveal"
       ? ""
       : earnedNow.length
-        ? `The learner's latest message earned: ${earnedNow.join(", ")}. You may tell them that part is right.`
+        ? `The learner's latest message earned: ${item.markingPoints
+            .filter((p) => earnedNow.includes(p.id))
+            .map((p) => p.text)
+            .join("; ")}. You may tell them that part is right.`
         : "The learner's latest message earned no new point. Do not say it is right, correct or exact. If it contains a mistake, say gently that it is not right yet and what to look at.";
   // Everything that is the same on every turn of this question comes first, so the provider can
   // serve it from its prompt cache (Ultra bills cached input at 12% of the normal price).
   // What changes turn to turn (progress, verdict, move) goes last.
-  const shown = item.markingPoints.filter((p) => state.met.includes(p.id)).map((p) => p.id);
+  // Points are described in words, never by their ids (M1, A1...), so the tutor has no code name to
+  // repeat to the learner ("That's M1 done").
+  const shown = item.markingPoints.filter((p) => state.met.includes(p.id)).map((p) => p.text);
   const system = [
     `You are a patient tutor for a ${item.level} ${item.subject} learner in Zimbabwe. You help them reach the answer themselves.`,
     "Rules you never break:",
@@ -139,11 +144,11 @@ export function tutorMessages(item: Item, state: TutorState, history: ChatTurn[]
     "- Only call something right if it is listed under \"Shown so far\". Never claim an answer is wrong unless the hidden solution shows it is.",
     "",
     `Question: ${item.question}`,
-    `Hidden marking points (for you only): ${item.markingPoints.map((p) => `${p.id}: ${p.text}`).join("; ")}`,
+    `Hidden marking points (for you only): ${item.markingPoints.map((p) => p.text).join("; ")}`,
     `Hidden worked solution (for you only): ${item.workedSolution.join(" | ")}`,
     "",
-    `Shown so far: ${shown.join(", ") || "nothing yet"}.`,
-    unmet.length ? `Still to come from the learner: ${unmet.map((p) => p.id).join(", ")}.` : "",
+    `Shown so far: ${shown.join("; ") || "nothing yet"}.`,
+    unmet.length ? `Still to come from the learner: ${unmet.map((p) => p.text).join("; ")}.` : "",
     verdict,
     strict ? "Your previous draft gave part of the answer away. Be more careful: guide with a question only." : "",
     `Your move now: ${moveInstruction(item, move)}`,
@@ -215,9 +220,13 @@ export async function takeTurn(call: ModelCall, item: Item, state: TutorState, h
       const out = await call("tutor", tutorMessages(item, s, history, learner, move, strict, a.met), { maxTokens: 260, temperature: 0.4 });
       usage.push(out.usage);
       // A worked step exists to show one point, so only the hard check for the final answer applies to it.
+      // A closing reply may say anything about the finished work, but never a marking point's code name.
       const check =
         move.kind === "close" || move.kind === "reveal"
-          ? { leak: false, why: [] }
+          ? (() => {
+              const why = namesPoint(item, out.text);
+              return { leak: why.length > 0, why };
+            })()
           : move.kind === "worked_step"
             ? (() => {
                 const why = codeLeaks(item, s, out.text, learner, permittedText(move));

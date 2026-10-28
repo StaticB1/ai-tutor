@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getItem } from "@/content/items";
 import { canReveal, chooseMove, revealTurn, takeTurn } from "@/lib/tutor/engine";
-import { codeLeaks } from "@/lib/tutor/guard";
+import { codeLeaks, namesPoint } from "@/lib/tutor/guard";
 import type { ModelCall, Role } from "@/lib/tutor/model";
 import { newState } from "@/lib/tutor/state";
 import type { Item } from "@/lib/tutor/types";
@@ -34,6 +34,29 @@ describe("leak guard (code)", () => {
     expect(codeLeaks(eng, newState(eng.id), "This is personification.", "is it a simile")).toContain('term "personification"');
     // once the learner has named it, the engine has already marked the point met, so echoing it is fine
     expect(codeLeaks(eng, { ...newState(eng.id), met: ["name"] }, "Yes, personification.", "I think personification")).toEqual([]);
+  });
+});
+
+describe("marking point names", () => {
+  it("blocks a reply that names a marking point by its code", () => {
+    expect(namesPoint(item, "Great, the hypotenuse is right. That's M1 done.")).toEqual(["names point M1"]);
+    expect(codeLeaks(item, newState(item.id), "That covers A1.", "")).toContain("names point A1");
+  });
+  it("does not mistake ordinary words or numbers for a code", () => {
+    expect(namesPoint(item, "Multiply out the bracket; M is not a point here, nor is AM1X or 3M1.")).toEqual([]);
+    const sci = getItem("science-photosynthesis") as Item;
+    expect(namesPoint(sci, "Remember the Reactants come first.")).toEqual([]);
+  });
+  it("never shows the tutor model a code name", async () => {
+    let prompt = "";
+    const call: ModelCall = async (role, messages) => {
+      if (role === "tutor") prompt = messages.map((m) => m.content).join("\n");
+      const text = role === "marker" ? '{"points": {"M1": true, "M2": false}, "mistake": null, "intent": "attempt"}' : role === "checker" ? '{"stated": {}}' : role === "safety" ? '{"category": "safe"}' : "What do you do next?";
+      return { text, usage: { model: role, promptTokens: 0, cachedTokens: 0, completionTokens: 0, ms: 0 } };
+    };
+    await takeTurn(call, item, newState(item.id), [], "3x - 12 = 2x + 5");
+    expect(prompt).toContain("Expands the bracket");
+    expect(prompt).not.toMatch(/\b(M1|M2|A1)\b/);
   });
 });
 

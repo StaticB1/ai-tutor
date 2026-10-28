@@ -15,9 +15,16 @@ function norm(s: string): string {
   return ` ${s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim()} `;
 }
 
-/** Deterministic part: the final answer, or a give-away word for a point not yet shown that is not already in the question or the learner's own words. */
+/** Marking point ids written like codes (M1, A1, C2, R, P) that appear in a reply: internal names a learner should never see. */
+export function namesPoint(item: Item, reply: string): string[] {
+  return item.markingPoints
+    .filter((p) => /^[A-Z]\d*$/.test(p.id) && new RegExp(`(^|[^A-Za-z0-9])${p.id}($|[^A-Za-z0-9])`).test(reply))
+    .map((p) => `names point ${p.id}`);
+}
+
+/** Deterministic part: the final answer, a give-away word for a point not yet shown that is not already in the question or the learner's own words, or a marking point's code name. */
 export function codeLeaks(item: Item, state: TutorState, reply: string, learnerWords: string, permitted = ""): string[] {
-  const why: string[] = [];
+  const why: string[] = namesPoint(item, reply);
   const answerMet = item.markingPoints.some((p) => p.answer && state.met.includes(p.id));
   if (item.finalAnswer && !answerMet) {
     // The learner's own words do not excuse the answer: "is it 12 or 17?" must not get a confirmation.
