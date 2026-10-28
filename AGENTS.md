@@ -13,6 +13,8 @@ A hint-only tutor for any school subject. The engine is in `src/lib/tutor/`; the
 - Session state is signed (`state.ts`). Never trust anything else the browser sends, including the chat history.
 - Never log learner text. The turn route logs one JSON line of counts.
 - Items in this repo are original samples. Never add past exam papers or mark schemes.
+- After adding or changing a question, give it a scripted right answer and common mistake in `tests/live/items.test.ts` and run it, and give it an `explore` search phrase.
+- Every deploy empties the CDN's cache of talk-mode lines: run `TUTOR_WARM_VOICE=1 npx vitest run --project live tests/live/warm-voice.test.ts` after it.
 
 ## Dependencies
 
@@ -20,4 +22,4 @@ No new dependency without Blessing's approval and a checked registry page. `.npm
 
 ## Tests
 
-`npm test` (unit, fake model). `npm run eval` calls the real models and needs `TUTOR_API_KEY`.
+`npm test` (unit, fake model). `npm run eval` calls the real models and needs `TUTOR_API_KEY`. The leak test on all 21 questions needs `--testTimeout=1800000`.

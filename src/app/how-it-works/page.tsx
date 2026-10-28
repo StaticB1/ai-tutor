@@ -66,7 +66,7 @@ export default function HowItWorks() {
           <li>Pages are built in advance and the maths is drawn on our server, so the phone downloads less.</li>
           <li>Large text, dark mode and reading aloud are in the settings at the top of every page.</li>
           <li>A maths keypad gives you × ÷ ² √ π and more without hunting on the keyboard.</li>
-          <li>Prefer to talk? Tap &ldquo;Talk to your tutor&rdquo; and have a spoken conversation: you speak, it answers out loud, then listens again.</li>
+          <li>Prefer to talk? Tap &ldquo;Talk to your tutor&rdquo;. It reads the question to you, then you speak, it answers out loud and listens again. While it works out a reply it says so, so you are not left in silence.</li>
           <li>Prefer paper? Take a photo of your working. Nemotron reads it into the box, and you fix anything it misread before you send.</li>
         </ul>
       </section>
@@ -77,15 +77,17 @@ export default function HowItWorks() {
           <li>You do not need an account. Your progress is saved in this browser only.</li>
           <li>We do not store your messages. They are sent to the AI models to get a reply, with data retention switched off.</li>
           <li>Reading aloud uses your device&apos;s own voice, so nothing extra is sent anywhere.</li>
+          <li>In talk mode the tutor&apos;s replies are spoken by a voice service (Cartesia or Murf). Only the tutor&apos;s words are sent to it, never yours.</li>
           <li>In talk mode your voice is turned into text by your browser&apos;s speech service. We never record or keep audio.</li>
           <li>A photo of your working is read once to turn it into text, then thrown away. We do not keep it.</li>
+          <li>The real-life examples after a question come from a web search for the question&apos;s topic. Your messages are not part of that search.</li>
         </ul>
       </section>
 
       <section className="space-y-2">
         <h2 className="text-2xl">Built with</h2>
         <p className="text-text-2">
-          NVIDIA Nemotron open models (Nemotron 3 Ultra for replies, Nemotron 3.5 Super VL for marking and checks), served by Nebius Token Factory. Built by Statotech Systems in Harare. The code is open source under the MIT licence.
+          NVIDIA Nemotron open models, served by Nebius Token Factory: Nemotron 3 Ultra writes the replies, Nemotron 3.5 Super VL marks your work, checks each reply and reads photos, and Nemotron 3.5 Lightning screens every message for safety. When you finish a question, &ldquo;Where you&apos;ll see this&rdquo; shows where the idea turns up in real life, found with a live Tavily web search of trusted education sites. Built by Statotech Systems in Harare. The code is open source under the MIT licence.
         </p>
       </section>
 
