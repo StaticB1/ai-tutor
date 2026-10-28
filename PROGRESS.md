@@ -2,7 +2,7 @@
 
 ## Status
 **Overall:** live
-**Last Updated:** 2026-10-28 12:30
+**Last Updated:** 2026-10-28 15:05
 
 ---
 
@@ -12,6 +12,7 @@
 ---
 
 ## Recently Completed
+- 2026-10-28: Security update of the web framework, Next.js 16.2.6 to 16.4.2 (with its CSS and image libraries). The library check had 1 critical and 2 high findings; now none (1 low remains in KaTeX, whose fix is a major version). 16.4.3 is not used yet: it is under 7 days old.
 - 2026-10-28: 11 new original questions, 21 in all (Form 1 to 4, 8 subjects). A live test plays each new one with right working and a common mistake: all 11 finish, none accepts the mistake (docs/eval/items-2026-10-28.json).
 - 2026-10-28: Leak test on all 21 questions (measured): plain "don't give the answer" prompt leaked 111 of 126 attempts, AI Tutor 0 of 126 (docs/eval/leaks-2026-10-28.json).
 - 2026-10-28: The tutor never shows internal marking-point names (a reply said "That's M1 done" in the 2026-10-23 test): points are described in words in its instructions, and code blocks any reply that names one.
