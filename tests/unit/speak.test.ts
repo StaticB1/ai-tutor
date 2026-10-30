@@ -159,6 +159,25 @@ describe("/api/speak fallback", () => {
     expect(f).toHaveBeenCalledTimes(2);
   });
 
+  it("speaks with ElevenLabs first when it is listed first, and skips it when its quota is used up", async () => {
+    process.env.TUTOR_VOICE = "elevenlabs,murf";
+    process.env.ELEVENLABS_API_KEY = "el";
+    process.env.MURF_API_KEY = "test3";
+    let quota = false;
+    const f = vi.fn(async (url: string) => {
+      if (url.includes("elevenlabs")) return quota ? new Response('{"detail":{"status":"quota_exceeded"}}', { status: 401 }) : new Response("mp3", { status: 200 });
+      return Response.json({ encodedAudio: Buffer.from("mp3").toString("base64") });
+    });
+    vi.stubGlobal("fetch", f);
+    const POST = await route();
+    expect((await POST(req())).headers.get("X-Voice")).toBe("elevenlabs");
+    quota = true;
+    expect((await POST(req())).headers.get("X-Voice")).toBe("murf");
+    expect((await POST(req())).headers.get("X-Voice")).toBe("murf");
+    expect(f.mock.calls.filter(([u]) => String(u).includes("elevenlabs"))).toHaveLength(2);
+    delete process.env.ELEVENLABS_API_KEY;
+  });
+
   it("uses the phone voice when the switch is off", async () => {
     delete process.env.TUTOR_VOICE;
     const r = await (await route())(req());

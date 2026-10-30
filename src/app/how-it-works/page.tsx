@@ -77,7 +77,7 @@ export default function HowItWorks() {
           <li>You do not need an account. Your progress is saved in this browser only.</li>
           <li>We do not store your messages. They are sent to the AI models to get a reply, with data retention switched off.</li>
           <li>Reading aloud uses your device&apos;s own voice, so nothing extra is sent anywhere.</li>
-          <li>In talk mode the tutor&apos;s replies are spoken by a voice service (Cartesia or Murf). Only the tutor&apos;s words are sent to it, never yours.</li>
+          <li>In talk mode the tutor&apos;s replies are spoken by a voice service (ElevenLabs or Murf). Only the tutor&apos;s words are sent to it, never yours.</li>
           <li>In talk mode your voice is turned into text by your browser&apos;s speech service. We never record or keep audio.</li>
           <li>A photo of your working is read once to turn it into text, then thrown away. We do not keep it.</li>
           <li>The real-life examples after a question come from a web search for the question&apos;s topic. Your messages are not part of that search.</li>

@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 // The tutor's voice. TUTOR_VOICE lists the natural voices to try, in order, e.g.
-// "cartesia,cartesia-2,murf": Cartesia Sonic Jacqueline on two accounts, then Murf Julia. Each voice
+// "elevenlabs,murf": ElevenLabs Flash (Lily), then Murf Julia ("cartesia" and "cartesia-2" also work). Each voice
 // that cannot speak is skipped and the next one tried in the same request; when none can, answer 204
 // and the browser uses the phone's own voice. Text only goes to the provider; nothing is stored.
 //
@@ -20,7 +20,7 @@ export const maxDuration = 60;
 // is back) so the browser stops asking until then. A failed request costs no credits, so a retry is free.
 //
 // Fixed lines (each question's opening, the "let me think" fillers) are asked for by name with GET
-// and may be cached by the CDN and the browser for a day, so they play at once and cost no credits
+// and may be cached by the CDN (30 days) and the browser (a day), so they play at once and cost no credits
 // after the first time.
 
 const Body = z.object({ text: z.string().min(1).max(1200) });
@@ -53,6 +53,17 @@ function cartesia(text: string, key: string): Promise<Response> {
   });
 }
 
+// ElevenLabs Flash streams the clip as it is made. The Starter plan's licence covers commercial use.
+function elevenlabs(text: string, key: string): Promise<Response> {
+  const voice = process.env.ELEVENLABS_VOICE_ID ?? "pFZP5JQG7iQjIQuC4Bku"; // Lily
+  return fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice}/stream?output_format=mp3_44100_64`, {
+    method: "POST",
+    headers: { "xi-api-key": key, "Content-Type": "application/json" },
+    body: JSON.stringify({ text, model_id: process.env.ELEVENLABS_MODEL ?? "eleven_flash_v2_5" }),
+    signal: AbortSignal.timeout(10_000),
+  });
+}
+
 // Murf has no streaming for its GEN2 voices, so it returns the whole clip at once (about 2 s for a
 // short reply), base64-encoded to save a second download.
 async function murf(text: string, key: string): Promise<Response> {
@@ -81,6 +92,7 @@ type Speak = (text: string, key: string) => Promise<Response>;
 
 /** Each voice name, the env var holding its key, and how it speaks. */
 const VOICES: Record<string, { key: string; speak: Speak }> = {
+  elevenlabs: { key: "ELEVENLABS_API_KEY", speak: elevenlabs },
   cartesia: { key: "CARTESIA_API_KEY", speak: cartesia },
   "cartesia-2": { key: "CARTESIA_API_KEY_2", speak: cartesia },
   murf: { key: "MURF_API_KEY", speak: murf },
@@ -109,7 +121,8 @@ function keptAudio(made: { audio: ArrayBuffer; voice: string }) {
     headers: {
       "Content-Type": "audio/mpeg",
       "Cache-Control": `public, max-age=${DAY_SECONDS}`,
-      "Vercel-CDN-Cache-Control": `max-age=${DAY_SECONDS}`,
+      // The CDN keeps them for 30 days (a deploy empties it anyway); browsers for a day, so a change of voice reaches them soon.
+      "Vercel-CDN-Cache-Control": `max-age=${30 * DAY_SECONDS}`,
       "X-Voice": made.voice,
     },
   });
