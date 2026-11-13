@@ -2,7 +2,9 @@
 
 ## Status
 **Overall:** live
-**Last Updated:** 2026-10-30 16:10
+**Last Updated:** 2026-11-13 17:53 KST
+
+**Hosting (since 2026-11-13):** moved from Vercel to Statotech's own server in Frankfurt. A push to `main` deploys it: the server builds the new version and keeps the old one if the build or its health check fails. Vercel deploy steps elsewhere in this file no longer apply.
 
 ---
 
